@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+
+<!--
+============================================================================================================
+=                                           output files definition                                        =
+=                                            Define your own filesfor ocean dynamics context                                         =
+=                                         put the variables you want...                                    =
+============================================================================================================
+    -->
+   
+    <file_definition type="one_file" name="@expname@_@freq@" sync_freq="1d" min_digits="4" >
+    
+      <file_group id="1ts_opa" output_freq="1ts"  output_level="10" enabled=".TRUE."/> <!-- 1 time step files -->
+
+      <file_group id="1h_opa" output_freq="1h"  output_level="10" enabled=".TRUE."/> <!-- 1h files -->
+
+      <file_group id="2h_opa" output_freq="2h"  output_level="10" enabled=".TRUE."/> <!-- 2h files -->
+
+      <file_group id="3h_opa" output_freq="3h"  output_level="10" enabled=".TRUE."/> <!-- 3h files -->     
+
+      <file_group id="4h_opa" output_freq="4h"  output_level="10" enabled=".TRUE."/> <!-- 4h files -->
+
+      <file_group id="6h_opa" output_freq="6h"  output_level="10" enabled=".TRUE."/> <!-- 6h files -->     
+    
+      <file_group id="1d_opa" output_freq="1d"  output_level="_AUTO_" enabled="_AUTO_">  <!-- 1d files -->   
+	
+      </file_group> 
+
+      <file_group id="5d_opa" output_freq="5d"  output_level="_AUTO_" enabled="_AUTO_">  <!-- 5d files -->   
+
+      </file_group> 
+	
+      <file_group id="1m_opa" output_freq="1mo" output_level="_AUTO_" enabled="_AUTO_"> <!-- real monthly files -->
+
+        <file id="file9" name_suffix="_grid_T" >
+	  <field field_ref="e3t" long_name="T-cell thickness"  level="2" />
+          <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"   operation="average" freq_op="1mo"  level="1" > @toce_e3t / @e3t </field>      
+          <field field_ref="soce"         name="so"       long_name="sea_water_salinity"                operation="average" freq_op="1mo" level="1" > @soce_e3t / @e3t </field>       
+          <!-- no agessc : sea_water_age_since_surface_contact -->
+          <!-- no cfc11  : moles_per_unit_mass_of_cfc11_in_sea_water -->
+          <!-- msftbarot : ocean_barotropic_mass_streamfunction : offline -->
+          <!-- mlotst    :           ocean_mixed_layer_thickness_defined_by_sigma_t : must be done offline -->
+          <!-- mlotstsq  : square_of_ocean_mixed_layer_thickness_defined_by_sigma_t : must be done offline -->
+          <field field_ref="mldr10_1"     name="mldr10_1" level="1" />
+          <field field_ref="mldr10_1max"  name="mldr10_1max"  long_name="max of Mixed Layer Depth 0.01 ref.10m"              operation="maximum" level="2"  />
+          <!-- wfonocorr : water_flux_into_sea_water_without_flux_correction : emp - erp -->
+	  <field field_ref="erp"          name="wfcorr"   long_name="water_flux_correction"                                   level="1" /> <!-- usually = 0 -->
+	  <field field_ref="qt"           name="tohfls"   long_name="surface_net_downward_total_heat_flux"    level="2"       />
+          <field field_ref="qrp"           name="hfcorr"      long_name="heat_flux_correction"                                                        level="1" />
+	  <!-- For freshwater conservation checking -->
+	  <field field_ref="empmr"         name="wfo"      long_name="water_flux_into_sea_water"        level="1"              />
+	  <field field_ref="emp_oce"       name="emp_oce"        level="2"                />
+	  <field field_ref="emp_ice"       name="emp_ice"        level="2"                />
+	  <field field_ref="fmmflx"        name="fmmflx"         level="2"               />
+	  <!-- For salt conservation checking -->
+        </file>
+
+	<file id="file10" name_suffix="_grid_U" description="ocean U grid variables" >
+	  <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity" operation="average" freq_op="1mo" level="2" > @uoce_e3u / @e3u </field>
+          <field field_ref="uocetr_eff"   name="uocetr_eff"  level="2" />
+	</file>
+	
+	<file id="file11" name_suffix="_grid_V" description="ocean V grid variables" >
+	  <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity" operation="average" freq_op="1mo" level="2" > @voce_e3v / @e3v </field>
+          <field field_ref="vocetr_eff"   name="vocetr_eff" level="2"  />
+	</file>
+	
+	<file id="file12" name_suffix="_grid_W" description="ocean W grid variables" >
+	  <field field_ref="av_wave"      name="av_wave" level="2" /> 
+	  <field field_ref="bn2"          name="bn2"      level="2"      /> 
+	  <field field_ref="emix_iwm"     name="emix_iwm"   level="2" /> 	  
+	  <field field_ref="avt_e3w"      name="NEMO_difvho"  long_name="ocean_vertical_heat_diffusivity"  operation="average" freq_op="1mo" level="1" > @avt_e3w / @e3w </field>
+	</file>
+
+	<file id="file13" name_suffix="_scalar" description="scalar variables"  >
+        </file>
+
+       <file id="file14" name_suffix="_diaptr_T_2D" description="zonal mean variables" >
+        </file>
+
+         <file id="file15" name_suffix="_diaptr_T_3D" description="zonal mean variables" >
+        </file>
+
+	    <file id="file16" name_suffix="_diaptr_W" description="diaptr variables"  >
+        </file>
+
+         <file id="file17" name_suffix="_strait_oce" description="transport variables through straits" >
+         </file>
+
+        <file id="file18" name_suffix="_trdtra" description="ocean trends variables" >
+        </file>
+
+      </file_group>
+
+
+      <file_group id="2m_opa" output_freq="2mo" output_level="10" enabled=".TRUE."/> <!-- real 2m files -->
+      <file_group id="3m_opa" output_freq="3mo" output_level="10" enabled=".TRUE."/> <!-- real 3m files -->
+      <file_group id="4m_opa" output_freq="4mo" output_level="10" enabled=".TRUE."/> <!-- real 4m files -->
+      <file_group id="6m_opa" output_freq="6mo" output_level="10" enabled=".TRUE."/> <!-- real 6m files -->
+
+      <file_group id="1y_opa"  output_freq="1y" output_level="_AUTO_" enabled="_AUTO_"> <!-- real yearly files -->
+
+	<file id="file19" name_suffix="_grid_T" description="ocean T grid variables" >
+	  <field field_ref="e3t"  level="2"  />
+	  <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"   level="2"              />
+	  <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"      operation="average" freq_op="1y" level="2" > @toce_e3t / @e3t </field>        
+	  <field field_ref="soce"         name="so"       long_name="sea_water_salinity"                   operation="average" freq_op="1y" level="2" > @soce_e3t / @e3t </field>         
+	  <field field_ref="mldr10_1"  level="2"    />
+	  <field field_ref="mldr10_1max"  name="mldr10_1max"  long_name="max of Mixed Layer Depth 0.01 ref.10m"              operation="maximum" level="2"  />
+	  <field field_ref="mldkz5"       name="omlmax"   long_name="ocean_mixed_layer_thickness_defined_by_mixing_scheme" level="2" operation="maximum" />
+	  <field field_ref="erp"          name="wfcorr"   long_name="water_flux_correction"                                   level="1" /> <!-- usually = 0 -->
+	  <field field_ref="qt"           name="tohfls"   long_name="surface_net_downward_total_heat_flux"    level="2"       />
+	  <field field_ref="empmr"        name="wfo"      long_name="water_flux_into_sea_water"             level="2"         />
+	  <field field_ref="emp_oce"      name="emp_oce"         level="2"              />
+	  <field field_ref="emp_ice"      name="emp_ice"         level="2"              />
+	  <field field_ref="fmmflx"       name="fmmflx"          level="2"               />
+	</file>
+	
+	<file id="file20" name_suffix="_grid_U" description="ocean U grid variables" >
+	  <field field_ref="e3u"  />
+	  <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity"      operation="average" freq_op="1y" level="2" > @uoce_e3u / @e3u </field> 
+	  <field field_ref="utau"         name="tauuo"   long_name="surface_downward_x_stress"  level="2"  />
+	  <field field_ref="uocetr_eff"   name="uocetr_eff" level="2"  />
+	  <field field_ref="ueiv_masstr"  name="ueiv_masstr" level="2"  />
+	  <field field_ref="ahtu_3d"      name="ahtu_3d" level="2"  />
+	  <field field_ref="aeiu_3d"      name="aeiu_3d" level="2"  />
+	</file>
+	
+	<file id="file21" name_suffix="_grid_V" description="ocean V grid variables" >
+	  <field field_ref="e3v"  />
+	  <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity"     operation="average" freq_op="1y" level="2" > @voce_e3v / @e3v </field>
+	  <field field_ref="vtau"         name="tauvo"   long_name="surface_downward_y_stress" level="2" />
+	  <field field_ref="vocetr_eff"   name="vocetr_eff" level="2"  />
+          <field field_ref="veiv_masstr"  name="veiv_masstr" level="2"  />
+          <field field_ref="ahtv_3d"      name="ahtv_3d" level="2"  />
+          <field field_ref="aeiv_3d"      name="aeiv_3d" level="2"  />
+	</file>
+	
+	<file id="file22" name_suffix="_grid_W" description="ocean W grid variables" >
+	  <field field_ref="e3w"  />
+	  <field field_ref="avt"          name="difvho"  long_name="ocean_vertical_heat_diffusivity" level="2" />
+	  <field field_ref="wocetr_eff"   name="wocetr_eff"  level="2" />
+	  <field field_ref="avt_evd"      name="avt_evd"   level="2"  />
+	  <field field_ref="av_wave"      name="av_wave"    level="2" />
+	  <field field_ref="bn2"          name="bn2"       level="2"  />
+	  <field field_ref="bflx_iwm"     name="bflx_iwm"  level="2"  />
+	  <field field_ref="pcmap_iwm"    name="pcmap_iwm" level="2"  />
+	  <field field_ref="emix_iwm"     name="emix_iwm"  level="2"  />
+	  <field field_ref="woce"         name="wo"    level="2"  />
+	  <field field_ref="weiv_masstr"  name="weiv_masstr"  level="2"  />
+	</file>
+	
+
+       <file id="file23" name_suffix="_diaptr_T_2D" description="zonal mean variables" >
+        </file>
+
+         <file id="file24" name_suffix="_diaptr_T_3D" description="zonal mean variables" >
+        </file>
+
+	<file id="file25" name_suffix="_diaptr_W" description="diaptr variables"  >
+        </file>
+
+        <file id="file26" name_suffix="_trdtra" description="ocean trends variables" >
+        </file>
+
+      </file_group>
+      
+      <file_group id="2y_opa"  output_freq="2y" output_level="10" enabled=".TRUE."/> <!-- real 2y files -->
+      <file_group id="5y_opa"  output_freq="5y" output_level="10" enabled=".TRUE."/> <!-- real 5y files -->
+      <file_group id="10y_opa" output_freq="10y" output_level="10" enabled=".TRUE."/> <!-- real 10y files -->
+
+    </file_definition>

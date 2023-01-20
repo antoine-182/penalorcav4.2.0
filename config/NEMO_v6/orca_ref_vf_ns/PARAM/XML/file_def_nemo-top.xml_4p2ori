@@ -1,0 +1,239 @@
+    <!-- $id$ -->
+    
+    <!-- 
+
+============================================================================================================
+=                                           output files definition                                        =
+=                                            Define your own files ocean biogeochemistry                                         =
+=                                         put the variables you want...                                    =
+============================================================================================================
+    -->
+    
+    <file_definition type="one_file" name="@expname@_@freq@" sync_freq="1d" min_digits="4" >
+    
+      <file_group id="1ts_pis" output_freq="1ts"  output_level="10" enabled=".TRUE."/> <!-- 1 time step files -->
+
+      <file_group id="1h_pis" output_freq="1h"  output_level="10" enabled=".TRUE."/> <!-- 1h files -->
+
+      <file_group id="2h_pis" output_freq="2h"  output_level="10" enabled=".TRUE."/> <!-- 2h files -->
+
+      <file_group id="3h_pis" output_freq="3h"  output_level="10" enabled=".TRUE."/> <!-- 3h files -->     
+
+      <file_group id="4h_pis" output_freq="4h"  output_level="10" enabled=".TRUE."/> <!-- 4h files -->
+
+      <file_group id="6h_pis" output_freq="6h"  output_level="10" enabled=".TRUE."/> <!-- 6h files -->     
+    
+      <file_group id="1d_pis" output_freq="1d"  output_level="_AUTO_" enabled="_AUTO_" enabled=".FALSE." >  <!-- 1d files -->   
+
+        <file id="file31" name_suffix="_bioscalar" description="pisces sms variables" >
+          <field field_ref="tdenit"   name="tdenit"    unit="TgN/yr" operation="instant" level="2" > tdenit * 14. * 86400. * 365. / 1e12 </field>
+          <field field_ref="tnfix"    name="tnfix"     unit="TgN/yr" operation="instant" level="2" > tnfix * 14. * 86400. * 365. / 1e12 </field>
+          <field field_ref="tcflx"    name="tcflx"     unit="PgC/yr" operation="instant" level="2" > tcflx * -1. * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="tcflxcum" name="tcflxcum"  unit="PgC"    operation="instant" level="2" > tcflxcum * -1. * 12. / 1e15 </field>
+          <field field_ref="tcexp"    name="tcexp"     unit="PgC/yr" operation="instant" level="2" > tcexp * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="tintpp"   name="tintpp"    unit="PgC/yr" operation="instant" level="2" > tintpp * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="pno3tot"  name="pno3tot"   unit="umolN"  operation="instant" level="2" > pno3tot * 16. / 122. * 1e6 </field>
+          <field field_ref="ppo4tot"  name="ppo4tot"   unit="umolP"  operation="instant" level="2" > ppo4tot * 1. / 122. * 1e6 </field>
+          <field field_ref="psiltot"  name="psiltot"   unit="umolC"  operation="instant" level="2" > psiltot * 1e6  </field>
+          <field field_ref="palktot"  name="palktot"   unit="umolC"  operation="instant" level="2" > palktot * 1e6  </field>
+          <field field_ref="pfertot"  name="pfertot"   unit="nmolFe" operation="instant" level="2" > pfertot * 1e9  </field>
+        </file>
+
+      </file_group> 
+
+      <file_group id="5d_pis" output_freq="5d"  output_level="_AUTO_" enabled="_AUTO_" enabled=".FALSE." >  <!-- 5d files -->   
+
+       <file id="file32" name_suffix="_bioscalar" description="pisces sms variables" >
+          <field field_ref="tdenit"   name="tdenit"    unit="TgN/yr" operation="instant" level="2" > tdenit * 14. * 86400. * 365. / 1e12 </field>
+          <field field_ref="tnfix"    name="tnfix"     unit="TgN/yr" operation="instant" level="2" > tnfix * 14. * 86400. * 365. / 1e12 </field>
+          <field field_ref="tcflx"    name="tcflx"     unit="PgC/yr" operation="instant" level="2" > tcflx * -1. * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="tcflxcum" name="tcflxcum"  unit="PgC"    operation="instant" level="2" > tcflxcum * -1. * 12. / 1e15 </field>
+          <field field_ref="tcexp"    name="tcexp"     unit="PgC/yr" operation="instant" level="2" > tcexp * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="tintpp"   name="tintpp"    unit="PgC/yr" operation="instant" level="2" > tintpp * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="pno3tot"  name="pno3tot"   unit="umolN"  operation="instant" level="2" > pno3tot * 16. / 122. * 1e6 </field>
+          <field field_ref="ppo4tot"  name="ppo4tot"   unit="umolP"  operation="instant" level="2" > ppo4tot * 1. / 122. * 1e6 </field>
+          <field field_ref="psiltot"  name="psiltot"   unit="umolC"  operation="instant" level="2" > psiltot * 1e6  </field>
+          <field field_ref="palktot"  name="palktot"   unit="umolC"  operation="instant" level="2" > palktot * 1e6  </field>
+          <field field_ref="pfertot"  name="pfertot"   unit="nmolFe" operation="instant" level="2" > pfertot * 1e9  </field>
+        </file>
+
+      </file_group> 
+
+	
+      <file_group id="1m_pis" output_freq="1mo" output_level="_AUTO_" enabled="_AUTO_" > <!-- real monthly files -->
+
+
+        <file id="file33" name_suffix="_ptrc_T" description="pisces sms variables" enabled=".TRUE." >
+          <field field_ref="e3t"       name="E3T"      long_name="T-cell thickness" />
+          <field field_ref="DIC"       name="DIC"      operation="average" freq_op="1mo" level="2" > @DIC_e3t / @e3t </field>
+          <field field_ref="Alkalini"  name="Alkalini" operation="average" freq_op="1mo" level="2" > @Alkalini_e3t / @e3t </field>
+          <field field_ref="O2"        name="O2"       operation="average" freq_op="1mo" level="2" > @O2_e3t / @e3t </field>
+          <field field_ref="CaCO3"     name="CaCO3"    operation="average" freq_op="1mo" level="2" > @CaCO3_e3t / @e3t </field>
+          <field field_ref="PO4"       name="PO4"      operation="average" freq_op="1mo" level="2" > @PO4_e3t / @e3t </field>
+          <field field_ref="POC"       name="POC"      operation="average" freq_op="1mo" level="2" > @POC_e3t / @e3t </field>
+          <field field_ref="Si"        name="Si"       operation="average" freq_op="1mo" level="2" > @Si_e3t / @e3t </field>
+          <field field_ref="PHY"       name="PHY"      operation="average" freq_op="1mo" level="2" > @PHY_e3t / @e3t </field>
+          <field field_ref="ZOO"       name="ZOO"      operation="average" freq_op="1mo" level="2" > @ZOO_e3t / @e3t </field>
+          <field field_ref="DOC"       name="DOC"      operation="average" freq_op="1mo" level="2" > @DOC_e3t / @e3t </field>
+          <field field_ref="PHY2"      name="PHY2"     operation="average" freq_op="1mo" level="2" > @PHY2_e3t / @e3t </field>
+          <field field_ref="ZOO2"      name="ZOO2"     operation="average" freq_op="1mo" level="2" > @ZOO2_e3t / @e3t </field>
+          <field field_ref="DSi"       name="DSi"      operation="average" freq_op="1mo" level="2" > @DSi_e3t / @e3t </field>
+          <field field_ref="Fer"       name="Fer"      operation="average" freq_op="1mo" level="2" > @Fer_e3t / @e3t </field>
+          <field field_ref="BFe"       name="BFe"      operation="average" freq_op="1mo" level="2" > @BFe_e3t / @e3t </field>
+          <field field_ref="GOC"       name="GOC"      operation="average" freq_op="1mo" level="2" > @GOC_e3t / @e3t </field>
+          <field field_ref="SFe"       name="SFe"      operation="average" freq_op="1mo" level="2" > @SFe_e3t / @e3t </field>
+          <field field_ref="DFe"       name="DFe"      operation="average" freq_op="1mo" level="2" > @DFe_e3t / @e3t </field>
+          <field field_ref="GSi"       name="GSi"      operation="average" freq_op="1mo" level="2" > @GSi_e3t / @e3t </field>
+          <field field_ref="NFe"       name="NFe"      operation="average" freq_op="1mo" level="2" > @NFe_e3t / @e3t </field>
+          <field field_ref="NCHL"      name="NCHL"     operation="average" freq_op="1mo" level="2" > @NCHL_e3t / @e3t </field>
+          <field field_ref="DCHL"      name="DCHL"     operation="average" freq_op="1mo" level="2" > @DCHL_e3t / @e3t </field>
+          <field field_ref="NO3"       name="NO3"      operation="average" freq_op="1mo" level="2" > @NO3_e3t / @e3t </field>
+          <field field_ref="NH4"       name="NH4"      operation="average" freq_op="1mo" level="2" > @NH4_e3t / @e3t </field>
+       </file>
+
+
+
+       <file id="file34" name_suffix="_diad_T" description="additional pisces diagnostics" enabled=".TRUE." >
+
+        <field field_ref="PH"         name="PH"       level="2" />
+        <field field_ref="CO3"        name="CO3"      level="2" />
+        <field field_ref="CO3sat"     name="CO3sat"   level="2" />
+        <field field_ref="PAR"        name="PAR"      level="2" />
+        <field field_ref="PCAL"       name="PCAL"     level="2"  />
+        <field field_ref="Cflx"       name="Cflx"     level="2"  />
+        <field field_ref="Oflx"       name="Oflx"     level="2"  />
+        <field field_ref="Dpco2"      name="Dpco2"    level="2"   />
+        <field field_ref="Dpo2"       name="Dpo2"     level="2"  />
+        <field field_ref="Heup"       name="Heup"     level="2" />
+        <field field_ref="Irondep"    name="Irondep"  level="2" />
+        <field field_ref="Ironsed"    name="Ironsed"  level="2" />
+        <field field_ref="Nfix"       name="Nfix"     level="2" />
+        <field field_ref="LNnut"      name="LNnut"    level="2" />
+        <field field_ref="LDnut"      name="LDnut"    level="2" />
+        <field field_ref="LNFe"       name="LNFe"     level="2" />
+        <field field_ref="LDFe"       name="LDFe"     level="2" />
+        <field field_ref="LNlight"    name="LNlight"  level="2"  />
+        <field field_ref="LDlight"    name="LDlight"  level="2"  />
+        <field field_ref="TPP"        name="TPP"      level="2" />
+        <field field_ref="INTPP"      name="INTPP"    level="2" />
+        <field field_ref="INTPNEW"    name="INTPNEW"  level="2"  />
+        <field field_ref="TPNEW"      name="TPNEW"    level="2" />
+        <field field_ref="EPC100"     name="EPC100"   level="2" />
+        <field field_ref="EPFE100"    name="EPFE100"  level="2"  />
+        <field field_ref="EPSI100"    name="EPSI100"  level="2"  />
+        <field field_ref="EPCAL100"   name="EPCAL100" level="2"  />
+        <field field_ref="xfracal"    name="xfracal"  level="2" />
+
+       </file>
+       
+       <file id="file35" name_suffix="_bioscalar" description="pisces sms variables" enabled=".TRUE." >
+          <field field_ref="tdenit"   name="tdenit"    unit="TgN/yr" operation="instant" level="1" > tdenit * 14. * 86400. * 365. / 1e12 </field>
+          <field field_ref="tnfix"    name="tnfix"     unit="TgN/yr" operation="instant" level="1" > tnfix * 14. * 86400. * 365. / 1e12 </field>
+          <field field_ref="tcflx"    name="tcflx"     unit="PgC/yr" operation="instant" level="1" > tcflx * -1. * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="tcflxcum" name="tcflxcum"  unit="PgC"    operation="instant" level="1" > tcflxcum * -1. * 12. / 1e15 </field>
+          <field field_ref="tcexp"    name="tcexp"     unit="PgC/yr" operation="instant" level="1" > tcexp * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="tintpp"   name="tintpp"    unit="PgC/yr" operation="instant" level="1" > tintpp * 12. * 86400. * 365. / 1e15 </field>
+          <field field_ref="pno3tot"  name="pno3tot"   unit="umolN"  operation="instant" level="1" > pno3tot * 16. / 122. * 1e6 </field>
+          <field field_ref="ppo4tot"  name="ppo4tot"   unit="umolP"  operation="instant" level="1" > ppo4tot * 1. / 122. * 1e6 </field>
+          <field field_ref="psiltot"  name="psiltot"   unit="umolC"  operation="instant" level="1" > psiltot * 1e6  </field>
+          <field field_ref="palktot"  name="palktot"   unit="umolC"  operation="instant" level="1" > palktot * 1e6  </field>
+          <field field_ref="pfertot"  name="pfertot"   unit="nmolFe" operation="instant" level="1" > pfertot * 1e9  </field>
+        </file>
+
+      </file_group>
+
+
+      <file_group id="2m_pis" output_freq="2mo" output_level="10" enabled=".TRUE."/> <!-- real 2m files -->
+      <file_group id="3m_pis" output_freq="3mo" output_level="10" enabled=".TRUE."/> <!-- real 3m files -->
+      <file_group id="4m_pis" output_freq="4mo" output_level="10" enabled=".TRUE."/> <!-- real 4m files -->
+      <file_group id="6m_pis" output_freq="6mo" output_level="10" enabled=".TRUE."/> <!-- real 6m files -->
+
+      <file_group id="1y_pis"  output_freq="1y" output_level="_AUTO_" enabled="_AUTO_"> <!-- real yearly files -->
+
+       <file id="file36" name_suffix="_ptrc_T" description="pisces sms variables" enabled=".TRUE." >
+          <field field_ref="e3t"       name="E3T"      long_name="T-cell thickness" />
+          <field field_ref="DIC"       name="DIC"      operation="average" freq_op="1y" level="1"  > @DIC_e3t / @e3t </field>
+          <field field_ref="Alkalini"  name="Alkalini" operation="average" freq_op="1y" level="1"  > @Alkalini_e3t / @e3t </field>
+          <field field_ref="O2"        name="O2"       operation="average" freq_op="1y" level="1"  > @O2_e3t / @e3t </field>
+          <field field_ref="CaCO3"     name="CaCO3"    operation="average" freq_op="1y" level="2" > @CaCO3_e3t / @e3t </field>
+          <field field_ref="PO4"       name="PO4"      operation="average" freq_op="1y" level="1"  > @PO4_e3t / @e3t </field>
+          <field field_ref="POC"       name="POC"      operation="average" freq_op="1y" level="1"  > @POC_e3t / @e3t </field>
+          <field field_ref="Si"        name="Si"       operation="average" freq_op="1y" level="1"  > @Si_e3t / @e3t </field>
+          <field field_ref="PHY"       name="PHY"      operation="average" freq_op="1y" level="2" > @PHY_e3t / @e3t </field>
+          <field field_ref="ZOO"       name="ZOO"      operation="average" freq_op="1y" level="2" > @ZOO_e3t / @e3t </field>
+          <field field_ref="DOC"       name="DOC"      operation="average" freq_op="1y" level="2" > @DOC_e3t / @e3t </field>
+          <field field_ref="PHY2"      name="PHY2"     operation="average" freq_op="1y" level="2" > @PHY2_e3t / @e3t </field>
+          <field field_ref="ZOO2"      name="ZOO2"     operation="average" freq_op="1y" level="2" > @ZOO2_e3t / @e3t </field>
+          <field field_ref="DSi"       name="DSi"      operation="average" freq_op="1y" level="2" > @DSi_e3t / @e3t </field>
+          <field field_ref="Fer"       name="Fer"      operation="average" freq_op="1y" level="1"  > @Fer_e3t / @e3t </field>
+          <field field_ref="BFe"       name="BFe"      operation="average" freq_op="1y" level="2" > @BFe_e3t / @e3t </field>
+          <field field_ref="GOC"       name="GOC"      operation="average" freq_op="1y" level="1"  > @GOC_e3t / @e3t </field>
+          <field field_ref="SFe"       name="SFe"      operation="average" freq_op="1y" level="2" > @SFe_e3t / @e3t </field>
+          <field field_ref="DFe"       name="DFe"      operation="average" freq_op="1y" level="2" > @DFe_e3t / @e3t </field>
+          <field field_ref="GSi"       name="GSi"      operation="average" freq_op="1y" level="2" > @GSi_e3t / @e3t </field>
+          <field field_ref="NFe"       name="NFe"      operation="average" freq_op="1y" level="2" > @NFe_e3t / @e3t </field>
+          <field field_ref="NCHL"      name="NCHL"     operation="average" freq_op="1y" level="1"  > @NCHL_e3t / @e3t </field>
+          <field field_ref="DCHL"      name="DCHL"     operation="average" freq_op="1y" level="1"  > @DCHL_e3t / @e3t </field>
+          <field field_ref="NO3"       name="NO3"      operation="average" freq_op="1y" level="1"  > @NO3_e3t / @e3t </field>
+          <field field_ref="NH4"       name="NH4"      operation="average" freq_op="1y" level="2" > @NH4_e3t / @e3t </field>
+       </file>
+
+      <file id="file37" name_suffix="_diad_T" description="additional pisces diagnostics"  enabled=".TRUE." >
+
+        <field field_ref="PH"         name="PH"       level="2" />
+        <field field_ref="CO3"        name="CO3"      level="2" />
+        <field field_ref="CO3sat"     name="CO3sat"   level="2" />
+        <field field_ref="PAR"        name="PAR"      level="2" />
+        <field field_ref="PCAL"       name="PCAL"     level="2"  />
+        <field field_ref="Cflx"       name="Cflx"     level="1"  />
+        <field field_ref="Oflx"       name="Oflx"     level="2"  />
+        <field field_ref="Dpco2"      name="Dpco2"    level="1"   />
+        <field field_ref="Dpo2"       name="Dpo2"     level="2"  />
+        <field field_ref="Heup"       name="Heup"     level="1" />
+        <field field_ref="Irondep"    name="Irondep"  level="2" />
+        <field field_ref="Ironsed"    name="Ironsed"  level="2" />
+        <field field_ref="Nfix"       name="Nfix"     level="1" />
+        <field field_ref="LNnut"      name="LNnut"    level="2" />
+        <field field_ref="LDnut"      name="LDnut"    level="2" />
+        <field field_ref="LNFe"       name="LNFe"     level="2" />
+        <field field_ref="LDFe"       name="LDFe"     level="2" />
+        <field field_ref="LNlight"    name="LNlight"  level="2"  />
+        <field field_ref="LDlight"    name="LDlight"  level="2"  />
+        <field field_ref="TPP"        name="TPP"      level="1" />
+        <field field_ref="INTPP"      name="INTPP"    level="1" />
+        <field field_ref="INTPNEW"    name="INTPNEW"  level="2"  />
+        <field field_ref="TPNEW"      name="TPNEW"    level="2" />
+        <field field_ref="EPC100"     name="EPC100"   level="1" />
+        <field field_ref="EPFE100"    name="EPFE100"  level="1"  />
+        <field field_ref="EPSI100"    name="EPSI100"  level="1"  />
+        <field field_ref="EPCAL100"   name="EPCAL100" level="1"  />
+        <field field_ref="xfracal"    name="xfracal"  level="2" />
+
+        </file>
+
+       <file id="file38" name_suffix="_Age" description="Age tracer" enabled=".FALSE." >
+          <field field_ref="e3t"       name="E3T"      long_name="T-cell thickness" />
+          <field field_ref="Age"         name="Age"      operation="average" freq_op="1y" level="1"  > @Age_e3t / @e3t </field>
+      </file>
+
+       <file id="file39" name_suffix="_CFC11" description="CFC11 tracer" enabled=".FALSE." >
+          <field field_ref="e3t"       name="E3T"      long_name="T-cell thickness" />
+          <field field_ref="CFC11"       name="CFC11"    operation="average" freq_op="1y" level="1"  > @CFC11_e3t / @e3t </field>
+          <field field_ref="qtr_CFC11"   name="qtrCFC11"  level="1"   />
+          <field field_ref="qint_CFC11"  name="qintCFC11" level="1"   />
+      </file>
+
+       <file id="file40" name_suffix="_CFC12" description="CFC12 tracer" enabled=".FALSE." >
+          <field field_ref="CFC12"       name="CFC12"    operation="average" freq_op="1y" level="1"  > @CFC12_e3t / @e3t </field>
+          <field field_ref="qtr_CFC12"   name="qtrCFC12"  level="1"   />
+          <field field_ref="qint_CFC12"  name="qintCFC12" level="1"   />
+      </file>
+
+      </file_group>
+
+      <file_group id="2y_pis"  output_freq="2y" output_level="10" enabled=".TRUE."/> <!-- real 2y files -->
+      <file_group id="5y_pis"  output_freq="5y" output_level="10" enabled=".TRUE."/> <!-- real 5y files -->
+      <file_group id="10y_pis" output_freq="10y" output_level="10" enabled=".TRUE."/> <!-- real 10y files -->
+
+   </file_definition>
+

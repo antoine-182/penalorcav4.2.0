@@ -1,0 +1,50 @@
+#!/bin/ksh
+#-----------------------------------
+function IOS_Initialize
+{ 
+    IGCM_debug_PushStack "IOS_Initialize"
+
+    echo INITIALIZE IOS !!!
+
+    IGCM_debug_PopStack "IOS_Initialize"
+}
+
+#-----------------------------------
+function IOS_Update
+{
+    IGCM_debug_PushStack "IOS_Update"
+
+    echo UPDATE IOS !!!
+# Activate server mode
+    IGCM_comp_modifyXmlFile force iodef.xml using_server NONE true
+
+    # Activate 2nd server level for CMIP6 type experiments (CMIP6 workflow)
+    if [ X"$( echo ${config_UserChoices_ExpType} | grep CMIP6 )" != "X" ] ; then
+       IGCM_comp_modifyXmlFile force iodef.xml using_server2 NONE true
+      
+       # Add include of cmip6 context in iodef.xml
+       # In iodef.xml add on next line after "CMIP6 CONTEXT"
+      if [ X"$( echo ${config_UserChoices_ExpType} | grep CMIP6 )" != "X" ] ; then
+         echo '<context id="nemo" src="./ping_nemo.xml"/>' >> add.tmp
+         echo '<context id="nemo" src="./dr2xml_opa9.xml"/>' >> add.tmp
+      fi
+      cp iodef.xml iodef.xml.tmp
+      sed -e "/CMIP6 CONTEXT/r add.tmp" \
+        iodef.xml.tmp > iodef.xml
+      rm iodef.xml.tmp add.tmp
+
+    fi
+
+
+    IGCM_debug_PopStack "IOS_Update"
+}
+
+#-----------------------------------
+function IOS_Finalize
+{
+    IGCM_debug_PushStack "IOS_Finalize"
+
+    echo FINALIZE IOS !!!
+
+    IGCM_debug_PopStack "IOS_Finalize"
+}

@@ -1,0 +1,44 @@
+# $Revision:: 1052                                     $ Revision of last commit
+# $Author:: sdipsl                                     $ Author of last commit
+# $Date:: 2014-09-11 16:23:32 +0200 (Thu, 11 Sep 2014) $ Date of last commit
+# IPSL (2006)
+#  This software is governed by the CeCILL licence see libIGCM/libIGCM_CeCILL.LIC
+
+#========================================================================
+[Configuration]
+#Compute date of loop
+PeriodDateBegin= 0010-01-01
+PeriodDateEnd= 0010-12-31
+CumulPeriod= 10
+# State of Job "Start", "Running", "OnQueue", "Completed"
+PeriodState= Running
+
+SubmitPath= /gpfsdswork/projects/rech/omr/ukd13rj/IGCM4p2/modipsl/config/NEMO_v6/bvpvfi1fs
+simuid= fe30af7e-d577-415b-8629-177b119810c0
+#========================================================================
+[PostProcessing]
+
+#RebuildRunning=y/n
+#RebuildToComplete=number of dir to rebuild
+#RebuildDateID=PeriodDateEnd correspondant au dernier flag de RebuildFrequency=true
+
+TimeSeriesRunning=n
+TimeSeriesCompleted=
+
+#========================================================================
+[Log]
+# Executables Size
+LastExeSize= ( 52297552, 0, 0, 22767416 )
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# CumulPeriod | PeriodDateBegin |   PeriodDateEnd |        RunDateBegin |          RunDateEnd |     RealCpuTime |     UserCpuTime |      SysCpuTime | ExeDate
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#           1 |        00010101 |        00011231 | 2023-01-11T11:10:04 | 2023-01-11T11:18:40 |       515.73000 |         0.04000 |         0.11000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28
+#           2 |        00020101 |        00021231 | 2023-01-11T11:24:43 | 2023-01-11T11:33:27 |       524.03000 |         0.05000 |         0.10000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28
+#           3 |        00030101 |        00031231 | 2023-01-11T11:42:31 | 2023-01-11T11:51:15 |       523.71000 |         0.04000 |         0.11000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28
+#           4 |        00040101 |        00041231 | 2023-01-11T11:58:12 | 2023-01-11T12:06:53 |       521.38000 |         0.04000 |         0.11000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28
+#           5 |        00050101 |        00051231 | 2023-01-11T12:14:15 | 2023-01-11T12:22:54 |       518.66000 |         0.04000 |         0.11000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28
+#           6 |        00060101 |        00061231 | 2023-01-11T12:51:04 | 2023-01-11T12:59:43 |       519.38000 |         0.05000 |         0.10000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28
+#           7 |        00070101 |        00071231 | 2023-01-11T13:05:49 | 2023-01-11T13:14:27 |       518.03000 |         0.05000 |         0.11000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28
+#           8 |        00080101 |        00081231 | 2023-01-11T13:20:19 | 2023-01-11T13:28:59 |       519.44000 |         0.05000 |         0.10000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28
+#           9 |        00090101 |        00091231 | 2023-01-11T13:34:46 | 2023-01-11T13:43:31 |       525.40000 |         0.04000 |         0.12000 | OCE_Jan_4_17:30-IOS_Jan_4_17:28

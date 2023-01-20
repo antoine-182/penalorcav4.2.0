@@ -1,0 +1,584 @@
+<?xml version="1.0"?>
+
+<!--
+============================================================================================================
+=                                           output files definition                                        =
+=                                            Define your own filesfor ocean dynamics context                                         =
+=                                         put the variables you want...                                    =
+============================================================================================================
+    -->
+   
+    <file_definition type="one_file" name="@expname@_@freq@" sync_freq="1d" min_digits="4" >
+    
+      <file_group id="1ts_opa" output_freq="1ts"  output_level="10" enabled=".TRUE."/> <!-- 1 time step files -->
+
+      <file_group id="1h_opa" output_freq="1h"  output_level="10" enabled=".TRUE."/> <!-- 1h files -->
+
+      <file_group id="2h_opa" output_freq="2h"  output_level="10" enabled=".TRUE."/> <!-- 2h files -->
+
+      <file_group id="3h_opa" output_freq="3h"  output_level="10" enabled=".TRUE."/> <!-- 3h files -->     
+
+      <file_group id="4h_opa" output_freq="4h"  output_level="10" enabled=".TRUE."/> <!-- 4h files -->
+
+      <file_group id="6h_opa" output_freq="6h"  output_level="10" enabled=".TRUE."/> <!-- 6h files -->     
+    
+      <file_group id="1d_opa" output_freq="1d"  output_level="_AUTO_" enabled="_AUTO_">  <!-- 1d files -->   
+	
+        <file id="file1" name_suffix="_grid_T" description="ocean T grid variables" >
+	  <field field_ref="sst"          name="tos"      long_name="sea_surface_temperature"          level="1"              />
+	  <field field_ref="sss"          name="sos"      long_name="sea_surface_salinity"             level="1"              />
+	  <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"   level="1"              />
+	  <field field_ref="sst"          name="tosstd"   long_name="sea_surface_temperature_standard_deviation"         operation="average" freq_op="1d" level="1"  > sqrt( @sst2 - @sst * @sst ) </field>
+	  <field field_ref="ssh"          name="zosstd"   long_name="sea_surface_height_above_geoid_standard_deviation"  operation="average" freq_op="1d" level="1" > sqrt( @ssh2 - @ssh * @ssh ) </field>
+	  <field field_ref="sst"          name="sstdcy"   long_name="amplitude of sst diurnal cycle" operation="average" freq_op="1d" level="1" > @sstmax - @sstmin </field>
+	  <field field_ref="mldr10_1"     />
+	  <field field_ref="mldr10_1"     name="mldr10_1dcy"  long_name="amplitude of mldr10_1 diurnal cycle" operation="average" freq_op="1d" level="1" > @mldr10_1max - @mldr10_1min </field>
+	</file>
+       
+        <file id="file2" name_suffix="_scalar" description="scalar variables" >
+
+	  <!-- Volume -->
+          <!-- global contents -->
+	  <field field_ref="voltot"          name="scvoltot"  level="1" />
+	  <field field_ref="sshtot"          name="scsshtot"  level="1" />
+	  <field field_ref="sshsteric"       name="scsshste"  level="1" />
+	  <field field_ref="sshthster"       name="scsshtst"  level="1" />
+	  <field field_ref="masstot"         name="scmastot"  level="1" />
+	  <field field_ref="temptot"         name="sctemtot"  level="1" />
+	  <field field_ref="saltot"          name="scsaltot"  level="1" />
+	  
+	  <!-- global drifts (conservation checks) -->
+	  <field field_ref="bgtemper"        name="bgtemper"  level="1"   />
+	  <field field_ref="bgsaline"        name="bgsaline"  level="1"   />
+	  <field field_ref="bgheatco"        name="bgheatco"  level="1"   />
+	  <field field_ref="bgheatfx"        name="bgheatfx"  level="1"   />
+	  <field field_ref="bgsaltco"        name="bgsaltco"  level="1"   />
+	  <field field_ref="bgvolssh"        name="bgvolssh"  level="1"   />
+	  <field field_ref="bgvole3t"        name="bgvole3t"  level="1"   />
+
+	  <!-- global surface forcings  -->
+	  <field field_ref="bgfrcvol"        name="bgfrcvol"  level="1"   />
+	  <field field_ref="bgfrctem"        name="bgfrctem"  level="1"   />
+	  <field field_ref="bgfrchfx"        name="bgfrchfx"  level="1"   />
+	  <field field_ref="bgfrcsal"        name="bgfrcsal"  level="1"   />
+
+	  <!-- Surface -->
+	  <!-- global contents -->
+          <field field_ref="ibgvol_tot"       name="ibgvol_tot" level="1"   />
+          <field field_ref="sbgvol_tot"       name="sbgvol_tot"  level="1"  />
+          <field field_ref="ibgarea_tot"      name="ibgarea_tot" level="1"  />
+          <field field_ref="ibgsalt_tot"      name="ibgsalt_tot" level="1"  />
+          <field field_ref="ibgheat_tot"      name="ibgheat_tot" level="1"  />
+          <field field_ref="sbgheat_tot"      name="sbgheat_tot" level="1"  />
+	  
+	  <!-- global drifts (conservation checks) -->
+          <field field_ref="ibgvolume"        name="ibgvolume"  level="1"   />
+          <field field_ref="ibgsaltco"        name="ibgsaltco"  level="1"   />
+          <field field_ref="ibgheatco"        name="ibgheatco"  level="1"   />
+          <field field_ref="ibgheatfx"        name="ibgheatfx"  level="1"   />
+	  
+	  <!-- global forcings  -->
+          <field field_ref="ibgfrcvoltop"     name="ibgfrcvoltop" level="1" />
+          <field field_ref="ibgfrcvolbot"     name="ibgfrcvolbot" level="1" />
+          <field field_ref="ibgfrctemtop"     name="ibgfrctemtop" level="1" />
+          <field field_ref="ibgfrctembot"     name="ibgfrctembot" level="1" />
+          <field field_ref="ibgfrcsal"        name="ibgfrcsal"    level="1" />
+          <field field_ref="ibgfrchfxtop"     name="ibgfrchfxtop" level="1" />
+          <field field_ref="ibgfrchfxbot"     name="ibgfrchfxbot" level="1" />
+	  
+        </file>
+	
+	<file id="file3" name_suffix="_SBC" description="surface fluxes variables" > <!-- time step automaticaly defined based on nn_fsbc -->
+	  <field field_ref="qsr_oce"       name="qsr_oce"  long_name="downward shortwave flux at ocean surface"      level="1"      />
+	  <field field_ref="qns_oce"       name="qns_oce"  long_name="downward non solar flux at ocean surface"      level="1"      />
+	  <field field_ref="qsr_ice"       name="qsr_ice"  long_name="downward shortwave flux at ice surface"        level="1"    />
+	  <field field_ref="qns_ice"       name="qns_ice"  long_name="downward non solar flux at ice surface"        level="1"    />
+	  <field field_ref="qtr_ice"       name="qtr_ice"  long_name="shortwave flux transmitted thru the ice"       level="1"     />
+	  <field field_ref="taum"          name="taum" level="1" />
+	  <field field_ref="wspd"          name="windsp" level="1"  />
+	  <field field_ref="precip"        name="precip" level="1" />
+	  <!-- For heat conservation checking -->
+	  <field field_ref="qt_oce"        name="qt_oce"   long_name="downward total flux at ocean surface"      level="1"      />
+	  <field field_ref="qemp_oce"      name="qemp_oce" long_name="Downward Heat Flux from E-P over open ocean"  level="1"          />
+	  <field field_ref="qt_ice"        name="qt_ice"   long_name="downward total flux at ice surface"        level="1"    />
+	  <field field_ref="qemp_ice"      name="qemp_ice" long_name="Downward Heat Flux from E-P over ice"      level="1"      />
+	  <field field_ref="hflx_rain_cea" name="hflx_rain_cea"    level="1"   />
+	  <field field_ref="hflx_evap_cea" name="hflx_evap_cea"    level="1"   />
+	  <field field_ref="hflx_snow_cea" name="hflx_snow_cea"    level="1"   />
+	  <field field_ref="hflx_cal_cea"  name="hflx_cal_cea"     level="1"  />
+	  <!-- For freshwater conservation checking -->
+	  <field field_ref="empmr"         name="wfo"      long_name="water_flux_into_sea_water"           level="1"           />
+	  <field field_ref="emp_oce"       name="emp_oce"                 level="1"      />
+	  <field field_ref="emp_ice"       name="emp_ice"                 level="1"      />
+	  <field field_ref="runoffs"       name="runoffs"                 level="1"      />
+      <field field_ref="runoffs"       name="friver"   long_name="water_flux_into_sea_water_from_rivers"     level="1" > runoffs - iceberg_cea </field>
+	  <field field_ref="calving_cea"   name="calving" level="1"  />
+          <field field_ref="iceberg_cea"   name="iceberg" level="1" />
+          <field field_ref="fwfisf_par"  name="iceshelf" level="1" />
+	  <field field_ref="vfxice"        name="vfxice" level="1"  />
+	  <field field_ref="vfxsnw"        name="vfxsnw" level="1" />
+	  <field field_ref="vfxsub"        name="vfxsub" level="1" />
+	  <field field_ref="rain"          name="rain"   level="1"    />
+	  <field field_ref="snow_ao_cea"   name="snow_ao_cea"   level="1"    />
+	  <field field_ref="snow_ai_cea"   name="snow_ai_cea"   level="1"    />
+	  <field field_ref="evap_ao_cea"   name="evap_ao_cea"   level="1"    />
+	  <field field_ref="subl_ai_cea"   name="subl_ai_cea"   level="1"    />
+	  <field field_ref="fmmflx"        name="fmmflx"  level="1" />
+          <field field_ref="hflx_snow_ai_cea" name="hflx_snow_ai"  level="1"  />
+          <field field_ref="hflx_snow_ao_cea" name="hflx_snow_ao" level="1"  />
+          <field field_ref="hflx_ice_cea"     name="hflx_ice"     level="1"  />
+          <field field_ref="hflx_isf_cea"     name="hflx_isf"     level="1"  />
+          <field field_ref="hflx_rnf_cea"     name="hflx_rnf"     level="1"  />
+	  <!-- For salt conservation checking -->
+          <field field_ref="saltflx"      name="sosflxdo" level="1"  />
+	  <!-- ice and snow -->
+	  <field field_ref="snowpre"      />
+	</file>
+
+      </file_group> 
+
+      <file_group id="5d_opa" output_freq="5d"  output_level="_AUTO_" enabled="_AUTO_">  <!-- 5d files -->   
+
+        <file id="file4" name_suffix="_grid_T" >
+	  <field field_ref="e3t" long_name="T-cell thickness" />
+          <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"   operation="average" freq_op="5d" level="1" > @toce_e3t / @e3t </field>      
+          <field field_ref="soce"         name="so"       long_name="sea_water_salinity"                operation="average" freq_op="5d" level="1" > @soce_e3t / @e3t </field>  
+          <field field_ref="hdiv"         name="hdivtr"   long_name="horizontal divergence transport"   operation="average" freq_op="5d" level="1" > @hdiv * @e3t </field>
+          <field field_ref="mldr10_1"     name="mldr10_1"  level="1" />
+          <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"                    level="1"              />
+          <field field_ref="qsr"          name="rsntds"      long_name="surface_net_downward_shortwave_flux"                                         level="1" />
+          <field field_ref="wspd"         name="windsp" level="1"  />
+          <field field_ref="empbmr"       name="wfob"     long_name="water_flux_into_sea_water at prev time-step"  level="1"   />
+	  <field field_ref="empmr"        name="wfo"      long_name="water_flux_into_sea_water"                    level="1"  />
+	  <field field_ref="runoffs"      name="runoffs"                 level="1"      />
+          <field field_ref="runoffs"      name="friver"   long_name="water_flux_into_sea_water_from_rivers"     level="1" > runoffs - iceberg_cea </field>
+          <field field_ref="fmmflx"       name="fmmflx" level="1"  />
+          <field field_ref="iceconc"      name="siconc" level="1"  />
+	</file>
+
+        <file id="file5" name_suffix="_grid_U" description="ocean U grid variables" >
+          <field field_ref="e3u"  level="1"  />
+          <field field_ref="uocetr_eff"   name="uocetr_eff" level="1"  />
+          <field field_ref="ahu_bbl"     level="1"   />
+        </file>
+
+        <file id="file6" name_suffix="_grid_V" description="ocean V grid variables" >
+          <field field_ref="e3v" level="1"  />
+          <field field_ref="vocetr_eff"   name="vocetr_eff" level="1"  />
+          <field field_ref="ahv_bbl"    level="1"    />
+        </file>
+
+        <file id="file7" name_suffix="_grid_W" description="ocean W grid variables" >
+          <field field_ref="e3w"  level="1"  />
+	  <field field_ref="wocetr_eff"   name="wocetr_eff" level="1"  /> 
+          <field field_ref="logavs"       name="difvsolog"  long_name="ocean_vertical_salt_diffusivity" operation="average" freq_op="5d" level="1"  > exp( @logavs ) </field>
+        </file>
+
+        <file id="file8" name_suffix="_trdtra" description="ocean trends variables" >
+          <field field_ref="ttrd_zdfp_e3t"   name="ttrdtr_zdfp"  long_name="Tendency_of_heat_content_from_parameterized_dianeutral_mixing"  unit="W m-2"     level="2"  > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_iso_e3t"    name="ttrdtr_iso"   long_name="Tendency_of_heat_content_from_parameterized_eddy_diffusion"     unit="W m-2"     level="2"   > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_totad_e3t"  name="ttrdtr_totad" long_name="Tendency_of_heat_content_from_residual_mean_advection"          unit="W m-2"     level="2"   > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_tot_e3t"    name="ttrdtr_tot"   long_name="Tendency_of_heat_content_from_all_processes"                    unit="W m-2"     level="2"   > this * $cpocean * $rho0  </field>
+          <field field_ref="strd_zdfp_e3t"   name="strdtr_zdfp"  long_name="Tendency_of_salt_content_from_parameterized_dianeutral_mixing"  unit="kg m-2 s-1" level="2"  > this * $rho0 </field>
+          <field field_ref="strd_iso_e3t"    name="strdtr_iso"   long_name="Tendency_of_salt_content_from_parameterized_eddy_diffusion"     unit="kg m-2 s-1" level="2"  > this * $rho0 </field>
+          <field field_ref="strd_totad_e3t"  name="strdtr_totad" long_name="Tendency_of_salt_content_from_residual_mean_advection"          unit="kg m-2 s-1" level="2"  > this * $rho0  </field>
+          <field field_ref="strd_tot_e3t"    name="strdtr_tot"   long_name="Tendency_of_salt_content_from_all_processes"                    unit="kg m-2 s-1" level="2"  > this * $rho0  </field>
+        </file>
+
+
+      </file_group> 
+	
+      <file_group id="1m_opa" output_freq="1mo" output_level="_AUTO_" enabled="_AUTO_"> <!-- real monthly files -->
+
+        <file id="file9" name_suffix="_grid_T" >
+	  <field field_ref="e3t" long_name="T-cell thickness"  level="2" />
+          <field field_ref="botpres"      name="pbo"      long_name="Pressure_at_sea_floor"             level="2"                              />
+          <!-- pso : sea_water_pressure_at_sea_water_surface = 0 -->
+          <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"     level="1"                            />
+          <field field_ref="ssh2"         name="zossq"    long_name="square_of_sea_surface_height_above_geoid"             level="2" />
+
+          <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"   operation="average" freq_op="1mo"  level="1" > @toce_e3t / @e3t </field>      
+          <field field_ref="sst"          name="tos"      long_name="sea_surface_temperature"                              level="1" />
+          <field field_ref="sst2"         name="tossq"    long_name="square_of_sea_surface_temperature"                    level="2" />
+          <field field_ref="soce"         name="so"       long_name="sea_water_salinity"                operation="average" freq_op="1mo" level="1" > @soce_e3t / @e3t </field>       
+          <field field_ref="sss"          name="sos"      long_name="sea_surface_salinity"                                                level="1" />
+	  <!-- diurnal cycle -->
+	  <!-- sst -->
+	  <field field_ref="sst"          name="sstdcymax"   long_name="max of sst diurnal cycle" operation="average" freq_op="1d" level="2" > @sstmax  </field>
+          <field field_ref="sst"          name="sstdcymin"   long_name="min of sst diurnal cycle" operation="average" freq_op="1d" level="2" > @sstmin </field>
+          <field field_ref="sst"          name="sstdcy"      long_name="amplitude of sst diurnal cycle" operation="average" freq_op="1d" level="2" > @sstmax - @sstmin </field>
+	  <!-- sss -->
+	  <field field_ref="sss"          name="sssdcymax"   long_name="max of sss diurnal cycle" operation="average" freq_op="1d" level="2" > @sssmax  </field>
+          <field field_ref="sss"          name="sssdcymin"   long_name="min of sss diurnal cycle" operation="average" freq_op="1d" level="2" > @sssmin </field>
+          <field field_ref="sss"          name="sssdcy"      long_name="amplitude of sss diurnal cycle" operation="average" freq_op="1d" level="2" > @sssmax - @sssmin </field>
+	  <!-- mld -->
+	  <field field_ref="mldr10_1"     name="mld10_1dcymax"   long_name="max of mld diurnal cycle" operation="average" freq_op="1d" level="2" > @mldr10_1max  </field>
+	  <field field_ref="mldr10_1"     name="mld10_1dcymin"   long_name="min of mld diurnal cycle" operation="average" freq_op="1d" level="2" > @mldr10_1min  </field>
+	  <field field_ref="mldr10_1"     name="mld10_1dcy"      long_name="amplitude of mld diurnal cycle" operation="average" freq_op="1d" level="2" > @mldr10_1max - @mldr10_1min  </field>
+	  <!--  -->
+          <field field_ref="rhop"         name="rhopoto"  long_name="sea_water_potential_density"                          level="2" />
+          <!-- no agessc : sea_water_age_since_surface_contact -->
+          <!-- no cfc11  : moles_per_unit_mass_of_cfc11_in_sea_water -->
+          <!-- msftbarot : ocean_barotropic_mass_streamfunction : offline -->
+          <!-- mlotst    :           ocean_mixed_layer_thickness_defined_by_sigma_t : must be done offline -->
+          <!-- mlotstsq  : square_of_ocean_mixed_layer_thickness_defined_by_sigma_t : must be done offline -->
+          <field field_ref="mldkz5"       name="omlmax"   long_name="ocean_mixed_layer_thickness_defined_by_mixing_scheme" level="2" operation="maximum" />
+          <field field_ref="mldkz5"       name="mldkz5"   level="2"  />
+          <field field_ref="mldr10_1"     name="mldr10_1" level="1" />
+          <field field_ref="mldr10_1max"  name="mldr10_1max"  long_name="max of Mixed Layer Depth 0.01 ref.10m"              operation="maximum" level="2"  />
+          <!-- wfonocorr : water_flux_into_sea_water_without_flux_correction : emp - erp -->
+          <field field_ref="erp"          name="wfcorr"   long_name="water_flux_correction"                                   level="1" /> <!-- usually = 0 -->
+          <field field_ref="qns"           name="nshfls"      long_name="surface_net_downward_non_solar_flux"                                         level="1" />
+          <field field_ref="qsr"           name="rsntds"      long_name="surface_net_downward_shortwave_flux"                                         level="1" />
+          <field field_ref="qsr3d"         name="rsds"        long_name="downwelling_shortwave_flux_in_sea_water"                                     level="2" />
+          <field field_ref="qrp"           name="hfcorr"      long_name="heat_flux_correction"                                                        level="1" />
+      <!-- next variables available with key_diahth -->
+      <field field_ref="mlddzt"        level="2" />
+      <field field_ref="mldr10_3"      level="2" />
+      <field field_ref="mldr0_1"       level="2" />
+      <field field_ref="mldr0_3"       level="2" />
+      <field field_ref="mld_dt02"      level="2" />
+      <field field_ref="topthdep"      level="2" />
+      <field field_ref="pycndep"       level="2" />
+      <field field_ref="BLT"           level="1" />
+      <field field_ref="tinv"          level="1" />
+      <field field_ref="depti"         level="1" />
+      <!-- <field field_ref="20d"           level="1" /> -->
+      <!-- <field field_ref="28d"           level="1" /> -->
+      <field field_ref="hc300"         level="1" />
+      <field field_ref="heatc"         level="1" />
+      <!-- next variables are additional for PISCES offline-->
+          <field field_ref="hdiv"         name="hdivtr"   long_name="horizontal divergence transport"      operation="average" freq_op="1mo" level="2" > @hdiv * @e3t </field>
+          <field field_ref="wspd"         name="windsp" level="2"  />
+          <field field_ref="empbmr"       name="wfob"     long_name="water_flux_into_sea_water at prev time-step"  level="2"   />
+          <field field_ref="fmmflx"       name="fmmflx" level="2"  />
+          <field field_ref="iceconc"      name="siconc" level="2"  />
+	  <!-- For heat conservation checking -->
+	  <field field_ref="qt_oce"        name="qt_oce"   long_name="downward total flux at ocean surface"       level="2"     />
+	  <field field_ref="qemp_oce"      name="qemp_oce" long_name="Downward Heat Flux from E-P over open ocean"   level="2"         />
+	  <field field_ref="qt_ice"        name="qt_ice"   long_name="downward total flux at ice surface"         level="2"   />
+	  <field field_ref="qemp_ice"      name="qemp_ice" long_name="Downward Heat Flux from E-P over ice"        level="2"    />
+	  <field field_ref="hflx_rain_cea" name="hflx_rain_cea"    level="2"   />
+	  <field field_ref="hflx_evap_cea" name="hflx_evap_cea"    level="2"   />
+	  <field field_ref="hflx_snow_cea" name="hflx_snow_cea"    level="2"   />
+	  <field field_ref="hflx_cal_cea"  name="hflx_cal_cea"    level="2"   />
+	  <!-- For freshwater conservation checking -->
+	  <field field_ref="empmr"         name="wfo"      long_name="water_flux_into_sea_water"        level="1"              />
+	  <field field_ref="emp_oce"       name="emp_oce"       level="2"                />
+	  <field field_ref="emp_ice"       name="emp_ice"       level="2"                />
+	  <field field_ref="runoffs"       name="runoffs"        level="2"               />
+	  <field field_ref="runoffs"       name="friver"   long_name="water_flux_into_sea_water_from_rivers"     level="1" > runoffs - iceberg_cea </field>
+	  <field field_ref="calving_cea"   name="calving" level="2" />
+          <field field_ref="iceberg_cea"   name="iceberg" level="2" />
+	  <field field_ref="fwfisf_par"     name="iceshelf" level="2" />
+         <field field_ref="vfxice"           name="vfxice" level="2" />
+         <field field_ref="vfxsnw"           name="vfxsnw" level="2" />
+         <field field_ref="vfxsub"           name="vfxsub" level="2" />
+         <field field_ref="vfxsub_err"       name="vfxsub_err" level="2" />
+         <field field_ref="vfxsnw_pre"       name="vfxsnw_pre" level="2" />
+         <field field_ref="vfxsnw_sub"       name="vfxsnw_sub" level="2" />
+         <field field_ref="vfxpnd"           name="vfxpnd" level="2" />		 
+	  <field field_ref="rain"          name="rain"   level="2"    />
+	  <field field_ref="snow_ao_cea"   name="snow_ao_cea"    level="2"   />
+	  <field field_ref="snow_ai_cea"   name="snow_ai_cea"    level="2"   />
+	  <field field_ref="evap_ao_cea"   name="evap_ao_cea"    level="2"   />
+	  <field field_ref="subl_ai_cea"   name="subl_ai_cea"    level="2"   />
+	  <!-- For salt conservation checking -->
+          <field field_ref="saltflx"      name="sosflxdo" level="2"  />
+        </file>
+
+	<file id="file10" name_suffix="_grid_U" description="ocean U grid variables" >
+	  <field field_ref="e3u"  level="2" />
+	  <field field_ref="ssu"          name="uos"     long_name="sea_surface_x_velocity"  level="2"   />
+	  <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity" operation="average" freq_op="1mo" level="2" > @uoce_e3u / @e3u </field>
+	  <field field_ref="utau"         name="tauuo"   long_name="surface_downward_x_stress" level="2" />
+          <field field_ref="uocetr_eff"   name="uocetr_eff"  level="2" />
+          <field field_ref="ahu_bbl"       />
+      <!-- available with key_diaar5 -->
+      <field field_ref="u_masstr"     name="vozomatr"  level="5" />
+      <field field_ref="u_heattr"     name="sozohetr"  level="5" />
+      <field field_ref="u_salttr"     name="sozosatr"  level="5" />
+	</file>
+	
+	<file id="file11" name_suffix="_grid_V" description="ocean V grid variables" >
+	  <field field_ref="e3v" level="2"  />
+	  <field field_ref="ssv"          name="vos"     long_name="sea_surface_y_velocity"    level="2" />
+	  <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity" operation="average" freq_op="1mo" level="2" > @voce_e3v / @e3v </field>
+	  <field field_ref="vtau"         name="tauvo"   long_name="surface_downward_y_stress" level="2" />
+          <field field_ref="vocetr_eff"   name="vocetr_eff" level="2"  />
+          <field field_ref="ahv_bbl"       />
+      <!-- available with key_diaar5 -->
+      <field field_ref="v_masstr"     name="vomematr" level="5"  />
+      <field field_ref="v_heattr"     name="somehetr" level="5"  />
+      <field field_ref="v_salttr"     name="somesatr" level="5"  />
+	</file>
+	
+	<file id="file12" name_suffix="_grid_W" description="ocean W grid variables" >
+	  <field field_ref="e3w"  level="2" />
+	  <field field_ref="woce"         name="wo"    level="2"  />
+	  <field field_ref="avt"          name="difvho"  long_name="ocean_vertical_heat_diffusivity" level="2" />
+	  <!-- avs: available with key_zdfddm -->
+	  <field field_ref="avs"          name="avs"     level="2"     /> 
+	  <field field_ref="avm"              name="avm"  level="2"       />
+	  <!-- avt_evd: available with ln_zdfevd -->
+	  <field field_ref="avt_evd"        name="avt_evd" level="2"  /> 
+	  <field field_ref="av_wave"      name="av_wave" level="2" /> 
+	  <field field_ref="bn2"             name="bn2"      level="2"      /> 
+	  <field field_ref="wocetr_eff"   name="wocetr_eff" level="2"  /> 
+	  <field field_ref="bflx_iwm"     name="bflx_iwm"   level="5" /> 
+	  <field field_ref="pcmap_iwm"    name="pcmap_iwm"  level="5" /> 
+	  <field field_ref="emix_iwm"     name="emix_iwm"   level="5" /> 	  
+	  <field field_ref="w_masstr"     name="vovematr"  level="5" />
+          <field field_ref="logavs"       name="difvsolog"  long_name="ocean_vertical_salt_diffusivity" operation="average" freq_op="1mo" level="2" > exp( @logavs ) </field>
+	  <field field_ref="avt_e3w"      name="NEMO_difvho"  long_name="ocean_vertical_heat_diffusivity"  operation="average" freq_op="1mo" level="5" > @avt_e3w / @e3w </field>
+	  <field field_ref="avt_e3w"      name="NEMO_difvho_noevd"  long_name="ocean_vertical_heat_diffusivity without evd contribution"  operation="average" freq_op="1mo" level="1" > (@avt_e3w - @avt_evd_e3w) / @e3w </field>
+	  <field field_ref="avs_e3w"      name="NEMO_difvso"  long_name="ocean_vertical_salt_diffusivity"  operation="average" freq_op="1mo" level="5" > @avs_e3w / @e3w </field>
+	  <field field_ref="avs_e3w"      name="NEMO_difvso_noevd"  long_name="ocean_vertical_salt_diffusivity without evd contribution"  operation="average" freq_op="1mo" level="5" > (@avs_e3w - @avt_evd_e3w) / @e3w </field>
+	</file>
+
+	<file id="file13" name_suffix="_scalar" description="scalar variables"  >
+
+	  <!-- Volume -->
+          <!-- global contents -->
+	  <field field_ref="voltot"          name="scvoltot"  level="1" />
+	  <field field_ref="sshtot"          name="scsshtot"  level="1" />
+	  <field field_ref="sshsteric"       name="scsshste"  level="1" />
+	  <field field_ref="sshthster"       name="scsshtst"  level="1" />
+	  <field field_ref="masstot"         name="scmastot"  level="1" />
+	  <field field_ref="temptot"         name="sctemtot"  level="1" />
+	  <field field_ref="saltot"          name="scsaltot"  level="1" />
+	  
+	  <!-- global drifts (conservation checks) -->
+	  <field field_ref="bgtemper"        name="bgtemper"   level="1"  />
+	  <field field_ref="bgsaline"        name="bgsaline"   level="1"  />
+	  <field field_ref="bgheatco"        name="bgheatco"   level="1"  />
+	  <field field_ref="bgheatfx"        name="bgheatfx"   level="1"  />
+	  <field field_ref="bgsaltco"        name="bgsaltco"   level="1"  />
+	  <field field_ref="bgvolssh"        name="bgvolssh"   level="1"  />
+	  <field field_ref="bgvole3t"        name="bgvole3t"   level="1"  />
+
+	  <!-- global surface forcings  -->
+	  <field field_ref="bgfrcvol"        name="bgfrcvol"   level="1"  />
+	  <field field_ref="bgfrctem"        name="bgfrctem"   level="1"  />
+	  <field field_ref="bgfrchfx"        name="bgfrchfx"   level="1"  />
+	  <field field_ref="bgfrcsal"        name="bgfrcsal"   level="1"  />
+
+	  <!-- Surface -->
+	  <!-- global contents -->
+          <field field_ref="ibgvol_tot"       name="ibgvol_tot"  level="1"  />
+          <field field_ref="sbgvol_tot"       name="sbgvol_tot"  level="1"  />
+          <field field_ref="ibgarea_tot"      name="ibgarea_tot" level="1"  />
+          <field field_ref="ibgsalt_tot"      name="ibgsalt_tot" level="1"  />
+          <field field_ref="ibgheat_tot"      name="ibgheat_tot" level="1"  />
+          <field field_ref="sbgheat_tot"      name="sbgheat_tot" level="1"  />
+	  
+	  <!-- global drifts (conservation checks) -->
+          <field field_ref="ibgvolume"        name="ibgvolume"   level="1"  />
+          <field field_ref="ibgsaltco"        name="ibgsaltco"   level="1"  />
+          <field field_ref="ibgheatco"        name="ibgheatco"   level="1"  />
+          <field field_ref="ibgheatfx"        name="ibgheatfx"   level="1"  />
+	  
+	  <!-- global forcings  -->
+          <field field_ref="ibgfrcvoltop"     name="ibgfrcvoltop" level="1" />
+          <field field_ref="ibgfrcvolbot"     name="ibgfrcvolbot" level="1" />
+          <field field_ref="ibgfrctemtop"     name="ibgfrctemtop" level="1" />
+          <field field_ref="ibgfrctembot"     name="ibgfrctembot" level="1" />
+          <field field_ref="ibgfrcsal"        name="ibgfrcsal"    level="1" />
+          <field field_ref="ibgfrchfxtop"     name="ibgfrchfxtop" level="1" />
+          <field field_ref="ibgfrchfxbot"     name="ibgfrchfxbot" level="1" />
+	  
+        </file>
+
+       <file id="file14" name_suffix="_diaptr_T_2D" description="zonal mean variables" >
+          <field field_ref="sophtove"    name="htovovrt"      grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstove"    name="sltovovrt"     grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtgyre"   name="htovgyre"      grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstgyre"   name="sltogyre"      grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtbtr"    name="htbtr"         grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstbtr"    name="sltbtr"        grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtadv"    name="htadv"         grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstadv"    name="sltadv"        grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtldf"    name="htldf"         grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstldf"    name="sltldf"        grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtvtr"    name="hfbasin"       grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstvtr"    name="sltbasin"      grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophteiv"    name="hfbasinpmadv"  grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopsteiv"    name="sltbasinpmadv" grid_ref="grid_ptr_T_2D"  level="2" />
+        </file>
+
+         <file id="file15" name_suffix="_diaptr_T_3D" description="zonal mean variables" >
+          <field field_ref="zotem"       name="znltem"        grid_ref="grid_ptr_T_3D" level="2" />
+          <field field_ref="zosal"       name="znlsal"        grid_ref="grid_ptr_T_3D" level="2" />
+          <field field_ref="zosrf"       name="znlsrf"        grid_ref="grid_ptr_T_3D" level="2" />
+        </file>
+
+	    <file id="file16" name_suffix="_diaptr_W" description="diaptr variables"  >
+          <field field_ref="zomsf"   name="msftyz_glo"  long_name="Overturning Stream-Function : global"       grid_ref="grid_ptr_W_GLO" level="1" />
+          <field field_ref="zomsf"   name="msftyz_atl"  long_name="Overturning Stream-Function : Atlantic"     grid_ref="grid_ptr_W_ATL" level="1" />
+          <field field_ref="zomsf"   name="msftyz_ind"  long_name="Overturning Stream-Function : Indo-PAcific" grid_ref="grid_ptr_W_IND" level="1" />
+        </file>
+
+         <file id="file17" name_suffix="_strait_oce" description="transport variables through straits" >
+           <field field_ref="masstr_strait"      name="mfo"  level="2"    />
+         </file>
+
+        <file id="file18" name_suffix="_trdtra" description="ocean trends variables" >
+          <field field_ref="ttrd_zdfp_e3t"   name="ttrdtr_zdfp"  long_name="Tendency_of_heat_content_from_parameterized_dianeutral_mixing"  unit="W m-2"      level="2"   > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_iso_e3t"    name="ttrdtr_iso"   long_name="Tendency_of_heat_content_from_parameterized_eddy_diffusion"     unit="W m-2"      level="2"   > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_totad_e3t"  name="ttrdtr_totad" long_name="Tendency_of_heat_content_from_residual_mean_advection"          unit="W m-2"      level="2"   > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_tot_e3t"    name="ttrdtr_tot"   long_name="Tendency_of_heat_content_from_all_processes"                    unit="W m-2"      level="2"   > this * $cpocean * $rho0  </field>
+          <field field_ref="strd_zdfp_e3t"   name="strdtr_zdfp"  long_name="Tendency_of_salt_content_from_parameterized_dianeutral_mixing"  unit="kg m-2 s-1" level="2"   > this * $rho0 </field>
+          <field field_ref="strd_iso_e3t"    name="strdtr_iso"   long_name="Tendency_of_salt_content_from_parameterized_eddy_diffusion"     unit="kg m-2 s-1" level="2"  > this * $rho0 </field>
+          <field field_ref="strd_totad_e3t"  name="strdtr_totad" long_name="Tendency_of_salt_content_from_residual_mean_advection"          unit="kg m-2 s-1" level="2"  > this * $rho0  </field>
+          <field field_ref="strd_tot_e3t"    name="strdtr_tot"   long_name="Tendency_of_salt_content_from_all_processes"                    unit="kg m-2 s-1" level="2"  > this * $rho0  </field>
+        </file>
+
+      </file_group>
+
+
+      <file_group id="2m_opa" output_freq="2mo" output_level="10" enabled=".TRUE."/> <!-- real 2m files -->
+      <file_group id="3m_opa" output_freq="3mo" output_level="10" enabled=".TRUE."/> <!-- real 3m files -->
+      <file_group id="4m_opa" output_freq="4mo" output_level="10" enabled=".TRUE."/> <!-- real 4m files -->
+      <file_group id="6m_opa" output_freq="6mo" output_level="10" enabled=".TRUE."/> <!-- real 6m files -->
+
+      <file_group id="1y_opa"  output_freq="1y" output_level="_AUTO_" enabled="_AUTO_"> <!-- real yearly files -->
+
+	<file id="file19" name_suffix="_grid_T" description="ocean T grid variables" >
+	  <field field_ref="e3t"  level="2"  />
+	  <field field_ref="sst"          name="tos"      long_name="sea_surface_temperature"          level="2"              />
+	  <field field_ref="sss"          name="sos"      long_name="sea_surface_salinity"             level="2"              />
+	  <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"   level="2"              />
+	  <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"      operation="average" freq_op="1y" level="2" > @toce_e3t / @e3t </field>        
+	  <field field_ref="soce"         name="so"       long_name="sea_water_salinity"                   operation="average" freq_op="1y" level="2" > @soce_e3t / @e3t </field>         
+	  <field field_ref="sst2"         name="tossq"    long_name="square_of_sea_surface_temperature"           level="2"   />
+	  <field field_ref="ssh2"         name="zossq"    long_name="square_of_sea_surface_height_above_geoid"    level="2"   />
+	  <field field_ref="mldr10_1"  level="2"    />
+	  <field field_ref="mldkz5"       name="omlmax"   long_name="ocean_mixed_layer_thickness_defined_by_mixing_scheme" level="2" operation="maximum" />
+	  <field field_ref="erp"          name="wfcorr"   long_name="water_flux_correction"                                   level="1" /> <!-- usually = 0 -->
+	  <field field_ref="qns"          name="nshfls"      long_name="surface_net_downward_non_solar_flux"                                         level="1" />
+	  <field field_ref="qsr"          name="rsntds"      long_name="surface_net_downward_shortwave_flux"                                         level="1" />
+	  <field field_ref="qsr3d"        name="rsds"        long_name="downwelling_shortwave_flux_in_sea_water"                                     level="1" />
+	  <field field_ref="qt"           name="tohfls"   long_name="surface_net_downward_total_heat_flux"    level="2"       />
+	  <field field_ref="taum"         name="taum" level="2" />
+	  <field field_ref="wspd"         name="sowindsp"  level="2" />
+	  <field field_ref="precip"       name="soprecip" level="2" />
+	  <!-- available with ln_blk_clio or ln_blk_core -->
+	  <field field_ref="qns_oce"      name="sonshdoo" level="2"  />
+	  <field field_ref="qlw_oce"      name="solwhdoo" level="2"  />
+	  <field field_ref="qsb_oce"      name="sosehdoo" level="2"  />
+	  <field field_ref="qla_oce"      name="solahdoo" level="2"  />
+	  <field field_ref="taum_oce"     name="sowndsto" level="2"  />
+	  <!-- ice and snow -->
+	  <field field_ref="snowpre"      name="isnowpre" level="2"  />
+	  <!-- For heat conservation checking -->
+	  <field field_ref="qt_oce"        name="qt_oce"   long_name="downward total flux at ocean surface"         level="2"   />
+	  <field field_ref="qemp_oce"      name="qemp_oce" long_name="Downward Heat Flux from E-P over open ocean"   level="2"         />
+	  <field field_ref="qt_ice"        name="qt_ice"   long_name="downward total flux at ice surface"          level="2"  />
+	  <field field_ref="qemp_ice"      name="qemp_ice" long_name="Downward Heat Flux from E-P over ice"        level="2"    />
+	  <field field_ref="hflx_rain_cea" name="hflx_rain_cea"     level="2"  />
+	  <field field_ref="hflx_evap_cea" name="hflx_evap_cea"     level="2"  />
+	  <field field_ref="hflx_snow_cea" name="hflx_snow_cea"    level="2"   />
+	  <field field_ref="hflx_cal_cea"  name="hflx_cal_cea"    level="2"   />
+	  <!-- For freshwater conservation checking -->
+	  <field field_ref="empmr"         name="wfo"      long_name="water_flux_into_sea_water"             level="2"         />
+	  <field field_ref="emp_oce"       name="emp_oce"         level="2"              />
+	  <field field_ref="emp_ice"       name="emp_ice"         level="2"              />
+	  <field field_ref="runoffs"       name="runoffs"         level="2"              />
+          <field field_ref="runoffs"       name="friver"   long_name="water_flux_into_sea_water_from_rivers"     level="1" > runoffs - iceberg_cea </field>
+	  <field field_ref="calving_cea"   name="calving" level="2" />
+          <field field_ref="iceberg_cea"   name="iceberg" level="2" />
+          <field field_ref="fwfisf_par"  name="iceshelf" level="2"  />
+	  <field field_ref="vfxice"        name="vfxice" level="2"  />
+	  <field field_ref="vfxsnw"        name="vfxsnw" level="2" />
+	  <field field_ref="vfxsub"        name="vfxsub" level="2" />
+	  <field field_ref="rain"          name="rain"    level="2"   />
+	  <field field_ref="snow_ao_cea"   name="snow_ao_cea"  level="2"     />
+	  <field field_ref="snow_ai_cea"   name="snow_ai_cea"  level="2"     />
+	  <field field_ref="evap_ao_cea"   name="evap_ao_cea"  level="2"     />
+	  <field field_ref="subl_ai_cea"   name="subl_ai_cea"  level="2"     />
+	  <!-- For salt conservation checking -->
+          <field field_ref="saltflx"      name="sosflxdo" level="2"  />
+	</file>
+	
+	<file id="file20" name_suffix="_grid_U" description="ocean U grid variables" >
+	  <field field_ref="e3u"  />
+	  <field field_ref="ssu"          name="uos"     long_name="sea_surface_x_velocity"   level="2"  />
+	  <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity"      operation="average" freq_op="1y" level="2" > @uoce_e3u / @e3u </field> 
+	  <field field_ref="utau"         name="tauuo"   long_name="surface_downward_x_stress"  level="2"  />
+	  <field field_ref="uocetr_eff"   name="uocetr_eff" level="2"  />
+	</file>
+	
+	<file id="file21" name_suffix="_grid_V" description="ocean V grid variables" >
+	  <field field_ref="e3v"  />
+	  <field field_ref="ssv"          name="vos"     long_name="sea_surface_y_velocity"  level="2"   />
+	  <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity"     operation="average" freq_op="1y" level="2" > @voce_e3v / @e3v </field>
+	  <field field_ref="vtau"         name="tauvo"   long_name="surface_downward_y_stress" level="2" />
+	  <field field_ref="vocetr_eff"   name="vocetr_eff" level="2"  />
+	</file>
+	
+	<file id="file22" name_suffix="_grid_W" description="ocean W grid variables" >
+	  <field field_ref="e3w"  />
+	  <field field_ref="woce"         name="wo"      long_name="ocean vertical velocity"         level="2" />
+	  <field field_ref="avt"          name="difvho"  long_name="ocean_vertical_heat_diffusivity" level="2" />
+	  <field field_ref="wocetr_eff"   name="wocetr_eff"  level="2" />
+	  <field field_ref="avt_evd"      name="avt_evd"   level="2"  />
+	  <field field_ref="av_wave"      name="av_wave"    level="2" />
+	  <field field_ref="bn2"          name="bn2"       level="2"  />
+	  <field field_ref="bflx_iwm"     name="bflx_iwm"  level="2"  />
+	  <field field_ref="pcmap_iwm"    name="pcmap_iwm" level="2"  />
+	  <field field_ref="emix_iwm"     name="emix_iwm"  level="2"  />
+	  <field field_ref="av_ratio"     name="av_ratio"  level="2"  />
+	</file>
+	
+
+       <file id="file23" name_suffix="_diaptr_T_2D" description="zonal mean variables" >
+          <field field_ref="sophtove"    name="htovovrt"      grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstove"    name="sltovovrt"     grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtgyre"   name="htovgyre"      grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstgyre"   name="sltogyre"      grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtbtr"    name="htbtr"         grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstbtr"    name="sltbtr"        grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtadv"    name="htadv"         grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstadv"    name="sltadv"        grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtldf"    name="htldf"         grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstldf"    name="sltldf"        grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophtvtr"    name="hfbasin"       grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopstvtr"    name="sltbasin"      grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sophteiv"    name="hfbasinpmadv"  grid_ref="grid_ptr_T_2D"  level="2" />
+          <field field_ref="sopsteiv"    name="sltbasinpmadv" grid_ref="grid_ptr_T_2D"  level="2" />
+        </file>
+
+         <file id="file24" name_suffix="_diaptr_T_3D" description="zonal mean variables" >
+          <field field_ref="zotem"       name="znltem"        grid_ref="grid_ptr_T_3D" level="2" />
+          <field field_ref="zosal"       name="znlsal"        grid_ref="grid_ptr_T_3D" level="2" />
+          <field field_ref="zosrf"       name="znlsrf"        grid_ref="grid_ptr_T_3D" level="2" />
+        </file>
+
+	<file id="file25" name_suffix="_diaptr_W" description="diaptr variables"  >
+	  <field field_ref="zomsf"          name="msftyz"  grid_ref="grid_ptr_W_3D" level="1" />
+        </file>
+
+        <file id="file26" name_suffix="_trdtra" description="ocean trends variables" >
+          <field field_ref="ttrd_zdfp_e3t"   name="ttrdtr_zdfp"  long_name="Tendency_of_heat_content_from_parameterized_dianeutral_mixing"  unit="W m-2"      level="2"  > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_iso_e3t"    name="ttrdtr_iso"   long_name="Tendency_of_heat_content_from_parameterized_eddy_diffusion"     unit="W m-2"      level="2"  > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_totad_e3t"  name="ttrdtr_totad" long_name="Tendency_of_heat_content_from_residual_mean_advection"          unit="W m-2"      level="2"  > this * $cpocean * $rho0  </field>
+          <field field_ref="ttrd_tot_e3t"    name="ttrdtr_tot"   long_name="Tendency_of_heat_content_from_all_processes"                    unit="W m-2"      level="2"  > this * $cpocean * $rho0  </field>
+          <field field_ref="strd_zdfp_e3t"   name="strdtr_zdfp"  long_name="Tendency_of_salt_content_from_parameterized_dianeutral_mixing"  unit="kg m-2 s-1" level="2"  > this * $rho0 </field>
+          <field field_ref="strd_iso_e3t"    name="strdtr_iso"   long_name="Tendency_of_salt_content_from_parameterized_eddy_diffusion"     unit="kg m-2 s-1" level="2"  > this * $rho0 </field>
+          <field field_ref="strd_totad_e3t"  name="strdtr_totad" long_name="Tendency_of_salt_content_from_residual_mean_advection"          unit="kg m-2 s-1" level="2"  > this * $rho0  </field>
+          <field field_ref="strd_tot_e3t"    name="strdtr_tot"   long_name="Tendency_of_salt_content_from_all_processes"                    unit="kg m-2 s-1" level="2"  > this * $rho0  </field>
+        </file>
+
+      </file_group>
+      
+      <!--  To compute transport through straits : need to read mask file ( every month is the best otherwise costly ) -->
+      <file id="maskMFO"  name="maskMFO" enabled="true" mode="read" output_freq="1mo" cyclic="true"  >
+        <field id="maskMFO_u" operation="instant" freq_offset="1mo" grid_ref="grid_U_4strait" />
+        <field id="maskMFO_v" operation="instant" freq_offset="1mo" grid_ref="grid_V_4strait" />
+      </file>
+
+      <file_group id="2y_opa"  output_freq="2y" output_level="10" enabled=".TRUE."/> <!-- real 2y files -->
+      <file_group id="5y_opa"  output_freq="5y" output_level="10" enabled=".TRUE."/> <!-- real 5y files -->
+      <file_group id="10y_opa" output_freq="10y" output_level="10" enabled=".TRUE."/> <!-- real 10y files -->
+
+    </file_definition>

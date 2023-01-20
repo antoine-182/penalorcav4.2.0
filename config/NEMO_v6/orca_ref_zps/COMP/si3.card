@@ -1,0 +1,42 @@
+[Compatibility]
+libIGCM=1.0
+
+[UserChoices]
+Init_From_File=0
+OutputLevel=10
+
+
+[InitialStateFiles]
+List=	()
+
+[BoundaryFiles]
+List=   ()
+ListNonDel= ()
+
+[SmoothFiles]
+List=	()
+
+[ParametersFiles]
+List=   (${MODIPSL}/modeles/NEMO/cfgs/SHARED/namelist_ice_ref      , namelist_ice_ref ), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/field_def_nemo-ice.xml, field_def_nemo-ice.xml ),\
+        (${SUBMIT_DIR}/PARAM/NAMELIST/namelist_ice_cfg             , namelist_ice_cfg ), \
+        (${SUBMIT_DIR}/PARAM/XML/file_def_nemo-ice_${RESOL_OCE}.xml, file_def_nemo-ice.xml   )
+
+
+[RestartFiles]
+List=   (${config_UserChoices_JobName}_${NEMO_END}_restart_ice.nc, restart_icemod.nc, restart_ice_in.nc)
+
+[OutputText]
+List=   (namelist_ice)
+
+[OutputFiles]
+List=   (${config_UserChoices_JobName}_1m_icemod.nc     , ${R_OUT_ICE_O_M}/${PREFIX}_1M_icemod.nc    , NONE )
+
+[Post_1M_icemod]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = ()
+ChunckJob2D = NONE
+TimeSeriesVars3D = ()
+ChunckJob3D = NONE
+Seasonal=ON

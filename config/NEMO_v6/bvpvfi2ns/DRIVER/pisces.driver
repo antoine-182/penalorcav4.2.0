@@ -1,0 +1,264 @@
+#!/bin/ksh
+
+#-----------------------------------
+function MBG_Initialize
+{ 
+    IGCM_debug_PushStack "MBG_Initialize"
+
+# Local function to find namelists parameters
+supergrep () {
+    grep "^ *$1 *=" $2 | sed -e "s% *\!.*%%"
+}
+
+    if [ X"${pisces_UserChoices_Offline_Mode}" = X"y" ] ; then
+
+       if [ X$ResolOce != X ]; then
+          #ResolOce is set in config.card
+          RESOL_OCE=${ResolOce}
+       else
+          RESOL_OCE=${config_UserChoices_ExpType%%_*}
+       fi
+       ORCAGRID=${opa9_UserChoices_ORCA_version%%.*}
+       exptype=${config_UserChoices_ExpType##*/}
+
+       IGCM_debug_Print 1 " "
+       IGCM_debug_Print 1 "RESOL_OCE        : ${RESOL_OCE}"
+       IGCM_debug_Print 1 "ORCAGRID         : ${ORCAGRID}"
+       IGCM_debug_Print 1 "EXPERIMENT TYPE  : ${exptype}"
+
+
+       OPA_RDT=$( supergrep rn_Dt  ${SUBMIT_DIR}/PARAM/NAMELIST/${RESOL_OCE}/namelist_offline_${exptype}_cfg | sed 's/ *rn_Dt *=//' | sed 's/\. *,//' )
+       # Period Length In Days between DateBegin and first day of calendar 0001 01 01
+       # /!\ Needed by OPA namelist to compute file names /!\
+       (( DaysSinceJC = $( IGCM_date_DaysSinceJC ${DateBegin} ) + 1 ))
+
+       (( OPA_NPDT_DAY  =  86400 / OPA_RDT ))
+       (( OPA_NPDT_YEAR  =  OPA_NPDT_DAY * 365     ))
+
+
+       IGCM_debug_Print 1 " "
+       IGCM_debug_Print 1 "OPA_RDT        ${OPA_RDT}"
+       IGCM_debug_Print 1 "OPA_NPDT_DAY   ${OPA_NPDT_DAY}"
+       IGCM_debug_Print 1 "OPA_NPDT_YEAR  ${OPA_NPDT_YEAR}"
+
+     fi
+
+    IGCM_debug_PopStack "MBG_Initialize"
+}
+
+#-----------------------------------
+function MBG_Update
+{
+    IGCM_debug_PushStack "MBG_Update"
+
+    
+    ##--Write Frequency for iomput
+    ## Differents frequencies are allowed for MBG files
+
+    VT1D_ENABLE=".FALSE."
+    VT5D_ENABLE=".FALSE."
+    VT1M_ENABLE=".FALSE."
+    VT1Y_ENABLE=".FALSE."
+
+    for frequency in ${config_MBG_WriteFrequency} ; do
+        case ${frequency} in
+            ( 1D|1d ) VT1D_ENABLE=".TRUE." ;;
+            ( 5D|5d ) VT5D_ENABLE=".TRUE." ;;
+            ( 1M|1m ) VT1M_ENABLE=".TRUE." ;;
+            ( *[yY] ) VT1Y_ENABLE=".TRUE." ;;
+        esac
+    done
+
+
+    if [ X"${pisces_UserChoices_Offline_Mode}" = X"y" ] ; then
+
+       # Period Length In Days between DateBegin and first day of calendar 0001 01 01
+       # Needed by OPA namelist to compute correct file names
+       (( PeriodDaysSinceJC =  $( IGCM_date_DaysSinceJC ${PeriodDateBegin} ) + 1  ))
+
+       ## Count of number of time steps from begin of OPA job
+       (( OPA_NIT000 = ( PeriodDaysSinceJC - DaysSinceJC ) * OPA_NPDT_DAY + 1 ))
+       (( OPA_NDT   = PeriodLengthInDays * OPA_NPDT_DAY ))
+       (( OPA_NITEND = OPA_NIT000 + OPA_NDT - 1))
+
+       ## Forcing to write one restart file at the end of period
+       OPA_NSTOCK="${OPA_NITEND}"
+
+       # nleapy configuration
+       case ${config_UserChoices_CalendarType} in
+           leap)
+               OPA_NLEAPY=1;;
+           noleap)
+               OPA_NLEAPY=0;;
+           360d)
+               OPA_NLEAPY=30;;
+       esac
+
+       typeset -r PRECIS=8
+       NEMO_END=$( echo $( awk "BEGIN { printf \"%0${PRECIS}d\",${OPA_NITEND} }" ) )
+
+
+       DYN_SSH_INI=.TRUE.
+       if [ "${exptype}" = "ia"   ] ; then
+          NbDynFile=${#pisces_UserChoices_DynFiles[*]}
+          (( LengthForcing=${pisces_UserChoices_DynYearEnd} - ${pisces_UserChoices_DynYearStart} + 1 ))
+          (( DiffForcing=abs( ${pisces_UserChoices_DynYearEnd} - ${year} ) ))
+          (( ModuloForcing=${DiffForcing} % ${LengthForcing} ))
+          if [ ${ModuloForcing} -eq 0 ] ; then
+             (( year_forcing=${pisces_UserChoices_DynYearEnd} ))
+          else
+             if [ ${year} -ge ${pisces_UserChoices_DynYearStart} ] && [ ${year} -le ${pisces_UserChoices_DynYearEnd} ] ; then
+                year_forcing=${year}
+             elif [ ${year} -lt ${pisces_UserChoices_DynYearStart} ] ; then
+                (( year_forcing=${pisces_UserChoices_DynYearEnd} - ${ModuloForcing} ))
+             else
+                (( year_forcing=${pisces_UserChoices_DynYearStart} + ${ModuloForcing} - 1 ))
+             fi
+          fi
+          (( year_forcing_m1 = ${year_forcing} - 1))
+          (( year_forcing_p1 = ${year_forcing} + 1))
+          eval CurrDateFor=${year_forcing}0101_${year_forcing}1231
+          eval PrevDateFor=${year_forcing_m1}0101_${year_forcing_m1}1231
+          eval NextDateFor=${year_forcing_p1}0101_${year_forcing_p1}1231
+          (( i = 0 ))
+           while [ $i -lt ${NbDynFile} ] ; do
+             eval Suffix=${pisces_UserChoices_DynFiles[$i]}
+             eval RunFileName=${pisces_UserChoices_DynRunName}_${Suffix}
+             eval PrevDynFileName=${pisces_UserChoices_DynName}_${PrevDateFor}_${pisces_UserChoices_DynFreq}_${Suffix}
+             eval CurrDynFileName=${pisces_UserChoices_DynName}_${CurrDateFor}_${pisces_UserChoices_DynFreq}_${Suffix}
+             eval NextDynFileName=${pisces_UserChoices_DynName}_${NextDateFor}_${pisces_UserChoices_DynFreq}_${Suffix}
+             IGCM_sys_Get ${pisces_UserChoices_R_DYN}/${PrevDynFileName}.nc  ${RunFileName}_y${year_m1}.nc
+             IGCM_sys_Get ${pisces_UserChoices_R_DYN}/${CurrDynFileName}.nc  ${RunFileName}_y${year}.nc
+             IGCM_sys_Get ${pisces_UserChoices_R_DYN}/${NextDynFileName}.nc  ${RunFileName}_y${year_p1}.nc
+	     ln -sf ${RunFileName}_y${year}.nc ${RunFileName}.nc
+             (( i = i + 1 ))
+          done
+          if [ ${year_forcing} = ${pisces_UserChoices_DynYearStart} ] ; then
+             DYN_SSH_INI=.TRUE.
+          else
+             DYN_SSH_INI=.FALSE
+          fi
+       fi
+    fi
+
+    ##-- Restart configuration
+    if ( [ "${CumulPeriod}" -eq 1 ] && [ "${config_MBG_Restart}" = "n" ] ) ; then
+
+        #echo "NO RESTART FOR TOP"
+        TOP_LRSTTR=.FALSE.
+        TOP_NRSTTR=0
+
+    elif ( [ "${CumulPeriod}" -eq 1 ] && [ "${config_MBG_Restart}" = "y" ] ) ; then
+
+        #echo "RESTART TOP"
+        TOP_LRSTTR=.TRUE.
+        TOP_NRSTTR=0
+
+    else
+
+        #echo "RESTART TOP"
+        TOP_LRSTTR=.TRUE.
+        TOP_NRSTTR=2
+    fi
+
+# on force les sorties PISCES comme les sorties OPA
+    if [ X"${pisces_UserChoices_Offline_Mode}" = X"y" ] ; then
+      IGCM_comp_modifyNamelist blocker    namelist_cfg cn_exp    ${config_UserChoices_JobName}
+      IGCM_comp_modifyNamelist blocker    namelist_cfg nn_it000  ${OPA_NIT000}
+      IGCM_comp_modifyNamelist blocker    namelist_cfg nn_itend  ${OPA_NITEND}
+      IGCM_comp_modifyNamelist blocker    namelist_cfg nn_stock  ${OPA_NSTOCK}
+      IGCM_comp_modifyNamelist blocker    namelist_cfg nn_date0  ${PeriodDateBegin}
+      IGCM_comp_modifyNamelist blocker    namelist_cfg nn_leapy  ${OPA_NLEAPY}
+
+# update domain_def.xml file 
+      case ${RESOL_OCE} in 
+          ( *ORCA025* )  
+            sed -e 's/<zoom_domain id="1point" ibegin="139" jbegin="119"/<zoom_domain id="1point" ibegin="600" jbegin="600"/' domain_def_nemo.xml > domain_def.xml.tmp  
+            IGCM_sys_Mv domain_def.xml.tmp domain_def_nemo.xml  ; 
+      esac 
+
+      IGCM_comp_modifyXmlFile force context_nemo.xml ref_year NONE ${InitYear}
+
+   fi
+
+   if [ X"${pisces_UserChoices_pis}" = X"n" ] ; then
+      echo "DeActivate pisces outputs"
+      IGCM_comp_modifyXmlFile force file_def_nemo-top.xml file33 enabled .FALSE.
+      IGCM_comp_modifyXmlFile force file_def_nemo-top.xml file34 enabled .FALSE.
+      IGCM_comp_modifyXmlFile force file_def_nemo-top.xml file35 enabled .FALSE.
+      IGCM_comp_modifyXmlFile force file_def_nemo-top.xml file36 enabled .FALSE.
+      IGCM_comp_modifyXmlFile force file_def_nemo-top.xml file37 enabled .FALSE.
+   fi
+
+   if [ X"${pisces_UserChoices_age}" = X"y" ] ; then
+      echo "Activate age tracer"
+      TOP_AGE=.TRUE.
+      IGCM_comp_modifyXmlFile force file_def_nemo-top.xml file38 enabled .TRUE.
+   else
+      TOP_AGE=.FALSE.
+   fi
+##
+   if [ X"${pisces_UserChoices_cfc11}" = X"y" ] ; then
+      echo "Activate CFC11  tracer"
+      TOP_CFC11=.TRUE.
+      IGCM_comp_modifyXmlFile force file_def_nemo-top.xml file39 enabled .FALSE.
+   else
+      TOP_CFC11=.FALSE.
+   fi
+##
+   if [ X"${pisces_UserChoices_cfc12}" = X"y" ] ; then
+      echo "Activate CFC12  tracer"
+      TOP_CFC12=.TRUE.
+      IGCM_comp_modifyXmlFile force file_def_nemo-top.xml file40 enabled .TRUE.
+   else
+      TOP_CFC12=.FALSE.
+   fi
+##
+   if [ X"${pisces_UserChoices_Co2Anthr}" = X"y" ] ; then
+      LCO2INT=.TRUE.
+   else
+      LCO2INT=.FALSE.
+   fi
+   ##-- Update namelist_top_cfg and namelist_pisces_cfg
+    IGCM_comp_modifyNamelist blocker    namelist_top_cfg     ln_rsttr  ${TOP_LRSTTR}
+    IGCM_comp_modifyNamelist blocker    namelist_top_cfg     nn_rsttr  ${TOP_NRSTTR}
+    IGCM_comp_modifyNamelist blocker    namelist_top_cfg     ln_age    ${TOP_AGE}
+    IGCM_comp_modifyNamelist blocker    namelist_top_cfg     ln_cfc11  ${TOP_CFC11}
+    IGCM_comp_modifyNamelist blocker    namelist_top_cfg     ln_cfc12  ${TOP_CFC12}
+    if [ X"${pisces_UserChoices_pis}" = X"y" ] ; then
+       IGCM_comp_modifyNamelist blocker    namelist_pisces_cfg  ln_co2int ${LCO2INT}
+       IGCM_comp_modifyNamelist blocker    namelist_pisces_cfg  atcco2    ${pisces_UserChoices_AtmCo2}
+       IGCM_comp_modifyNamelist blocker    namelist_pisces_cfg  nrdttrc   ${pisces_UserChoices_PisFreq}
+       IGCM_comp_modifyNamelist blocker    namelist_pisces_cfg  nn_pisdmp ${OPA_NPDT_YEAR}
+    fi
+ 
+    # Update iodef.xml
+
+    IGCM_debug_Print 1 'Informations into iodef.xml : VT1D_ENABLE VT5D_ENABLE VT1M_ENABLE VT1Y_ENABLE '
+    IGCM_debug_Print 1 ${VT1D_ENABLE}  ${VT5D_ENABLE} ${VT1M_ENABLE} ${VT1Y_ENABLE}
+
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-top.xml 1d_pis enabled ${VT1D_ENABLE}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-top.xml 5d_pis enabled ${VT5D_ENABLE}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-top.xml 1m_pis enabled ${VT1M_ENABLE}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-top.xml 1y_pis enabled ${VT1Y_ENABLE}
+
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-top.xml 1d_pis output_level ${pisces_UserChoices_OutputLevel}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-top.xml 5d_pis output_level ${pisces_UserChoices_OutputLevel}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-top.xml 1m_pis output_level ${pisces_UserChoices_OutputLevel}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-top.xml 1y_pis output_level ${pisces_UserChoices_OutputLevel}
+
+
+
+   IGCM_debug_PopStack "MBG_Update"
+}
+
+#-----------------------------------
+function MBG_Finalize
+{
+    IGCM_debug_PushStack "MBG_Finalize"
+
+    echo FINALIZE MBG !!!
+
+    IGCM_debug_PopStack "MBG_Finalize"
+}
+

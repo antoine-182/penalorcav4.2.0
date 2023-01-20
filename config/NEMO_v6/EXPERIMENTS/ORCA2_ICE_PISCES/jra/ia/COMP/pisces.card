@@ -1,0 +1,135 @@
+[Compatibility]
+libIGCM=1.0
+
+[UserChoices]
+pis=y
+age=n
+cfc11=n
+cfc12=n
+PisFreq=1
+Offline_Mode=n
+Co2Anthr=n
+AtmCo2=2.8432e+02
+OutputLevel=10
+
+[InitialStateFiles]
+List= ()
+
+[BoundaryFiles]
+List=       ()
+
+
+ListNonDel= (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/TDIC_GLODAPv2.1_annual_r360x180xl31.nc , data_DIC_nomask.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/TALK_GLODAPv2.1_annual_r360x180xl31.nc , data_ALK_nomask.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/O2_WOA2009_monthly_r360x180xl31.nc     , data_OXY_nomask.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/PO4_WOA2009_monthly_r360x180xl31.nc    , data_PO4_nomask.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/Si_WOA2009_monthly_r360x180xl31.nc     , data_SIL_nomask.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/NO3_WOA2009_monthly_r360x180xl31.nc    , data_NO3_nomask.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/DOC_PISCES_monthly_r360x180xl31.nc     , data_DOC_nomask.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/Fer_PISCES_monthly_r360x180xl31.nc     , data_FER_nomask.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/weights_3D_r360x180_${opa9_UserChoices_ORCA_version}_bilinear.nc, weights_3D_r360x180_bilin.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/weights_3D_r360x180_${opa9_UserChoices_ORCA_version}_bilinear.nc, weights_2D_r360x180_bilin.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/${opa9_UserChoices_ORCA_version}_pmarge_etopo.nc                    , pmarge.orca.nc      ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/${opa9_UserChoices_ORCA_version}_hydrofe.nc                         , hydrofe.orca.nc      ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/${opa9_UserChoices_ORCA_version}_river_1m_global_news2.nc           , river.orca.nc      ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/${opa9_UserChoices_ORCA_version}_par_fraction_gewex_clim90s00s.nc   , par_fraction.orca.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/DUST_INCA_r360x180.new.nc                 , dustdep.nc       ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/PISCES/ndeposition_Duce_annual_eORCA1-r360x180.nc, nitdep.nc), \
+            (${R_IN}/OCE/NEMO/FORCINGS/GHG/CFCs_CDIAC.dat                      , CFCs_CDIAC.dat     ), \
+            (${R_IN}/OCE/NEMO/FORCINGS/GHG/CO2_OMIP6_1600_2014.txt             , atcco2.txt         )
+
+
+
+[ParametersFiles]
+List=   (${MODIPSL}/modeles/NEMO/cfgs/SHARED/namelist_top_ref            , namelist_top_ref), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/namelist_pisces_ref         , namelist_pisces_ref), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/namelist_trc_ref            , namelist_trc_ref   ), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/field_def_nemo-pisces.xml   , field_def_nemo-pisces.xml  ), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/field_def_nemo-innerttrc.xml, field_def_nemo-innerttrc.xml), \
+        (${SUBMIT_DIR}/PARAM/NAMELIST/${RESOL_OCE}/namelist_top_cfg      , namelist_top_cfg           ), \
+        (${SUBMIT_DIR}/PARAM/NAMELIST/namelist_pisces_cfg                , namelist_pisces_cfg        ), \
+        (${SUBMIT_DIR}/PARAM/NAMELIST/namelist_trc_cfg                   , namelist_trc_cfg           ), \
+        (${SUBMIT_DIR}/PARAM/XML/file_def_nemo-top.xml                   , file_def_nemo-top.xml   )
+
+
+[RestartFiles]
+List=   (${config_UserChoices_JobName}_${NEMO_END}_restart_trc.nc,  restart_trc.nc, restart_trc.nc)
+
+[OutputText]
+List=   (namelist_top_ref, namelist_top_cfg, namelist_pisces_ref, namelist_pisces_cfg, tracer.stat)
+
+
+[OutputFiles]
+List=   (${config_UserChoices_JobName}_1y_ptrc_T.nc        , ${R_OUT_MBG_O_Y}/${PREFIX}_1Y_ptrc_T.nc    , NONE ) , \
+        (${config_UserChoices_JobName}_1y_diad_T.nc        , ${R_OUT_MBG_O_Y}/${PREFIX}_1Y_diad_T.nc    , NONE ) , \
+        (${config_UserChoices_JobName}_1y_Age.nc           , ${R_OUT_MBG_O_Y}/${PREFIX}_1Y_Age.nc       , NONE ) , \
+        (${config_UserChoices_JobName}_1y_CFC11.nc         , ${R_OUT_MBG_O_Y}/${PREFIX}_1Y_CFC11.nc     , NONE ) , \
+        (${config_UserChoices_JobName}_1y_CFC12.nc         , ${R_OUT_MBG_O_Y}/${PREFIX}_1Y_CFC12.nc     , NONE ) , \
+        (${config_UserChoices_JobName}_1m_bioscalar.nc     , ${R_OUT_MBG_O_M}/${PREFIX}_1M_bioscalar.nc , Post_1M_bioscalar) , \
+        (${config_UserChoices_JobName}_1m_ptrc_T.nc        , ${R_OUT_MBG_O_M}/${PREFIX}_1M_ptrc_T.nc    , NONE   ) , \
+        (${config_UserChoices_JobName}_1m_diad_T.nc        , ${R_OUT_MBG_O_M}/${PREFIX}_1M_diad_T.nc    , NONE   ) , \
+        (${config_UserChoices_JobName}_1d_bioscalar.nc     , ${R_OUT_MBG_O_D}/${PREFIX}_1D_bioscalar.nc , NONE)
+
+
+[Post_1D_bioscalar]
+Patches = ()
+GatherWithInternal = (time_counter, time_instant, time_instant_bounds)
+TimeSeriesVars2D = (pno3tot, ppo4tot, psiltot, palktot, pfertot, tcflx, tcflxcum, tcexp, tintpp, tnfix, tdenit)
+ChunckJob2D = NONE
+TimeSeriesVars3D = ()
+ChunckJob3D = NONE
+Seasonal=OFF
+
+[Post_1M_bioscalar]
+Patches = ()
+GatherWithInternal = (time_counter, time_instant, time_instant_bounds)
+TimeSeriesVars2D = (pno3tot, ppo4tot, psiltot, palktot, pfertot, tcflx, tcflxcum, tcexp, tintpp, tnfix, tdenit)
+ChunckJob2D = NONE
+TimeSeriesVars3D = ()
+ChunckJob3D = NONE
+Seasonal=OFF
+
+[Post_1M_ptrc_T]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, deptht, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = ()
+ChunckJob2D = 50Y
+TimeSeriesVars3D = (Alkalini, NCHL, DCHL, DIC, Fer, NO3, O2, PO4, Si)
+ChunckJob3D = 50Y
+Seasonal=OFF
+
+[Post_1M_diad_T]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, deptht, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = (Cflx, Dpco2, EPC100, INTPP)
+ChunckJob2D = 50Y
+TimeSeriesVars3D = (TPP)
+ChunckJob3D = 50Y
+Seasonal=OFF
+
+[Post_1Y_ptrc_T]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, deptht, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = ()
+ChunckJob2D = OFF
+TimeSeriesVars3D = (Alkalini, NCHL, DCHL, DIC, Fer, NO3, O2, PO4, Si )
+ChunckJob3D = NONE
+Seasonal=OFF
+
+[Post_1Y_diad_T]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, deptht, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = (Cflx, Dpco2, EPC100, Heup,  Nfix)
+ChunckJob2D = 50Y
+TimeSeriesVars3D = (PAR, TPP)
+ChunckJob3D = 50Y
+Seasonal=OFF
+
+[Post_1Y_inerttrc]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, deptht, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = ()
+ChunckJob2D = OFF
+TimeSeriesVars3D = (Age)
+ChunckJob3D = NONE
+Seasonal=OFF

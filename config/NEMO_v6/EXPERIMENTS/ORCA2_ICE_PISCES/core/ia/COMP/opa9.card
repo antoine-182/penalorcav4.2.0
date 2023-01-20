@@ -1,0 +1,149 @@
+[Compatibility]
+libIGCM=1.0
+
+[UserChoices]
+#==============================================================
+ORCA_version=ORCA2.4.2
+mesh_mask=n
+OutputLevel=10
+forcing=core
+R_FORCING=${R_IN}/OCE/NEMO/FORCINGS/COREIIcorr
+ListForcing=(u_10_CORE2_fill v_10_CORE2_fill t_10_CORE2_fill q_10_CORE2_fill ncar_rad_CORE2_fill ncar_precip_CORE2_fill slp_CORE2_fill)
+YearForcingInit=1948
+YearForcingEnd=2009
+#==============================================================
+
+[InitialStateFiles]
+List=   ()
+
+[BoundaryFiles]
+List=  ()
+
+
+ListNonDel= (${opa9_UserChoices_R_FORCING}/weights_coreII_2_${opa9_UserChoices_ORCA_version}_bilinear.nc, weights_bilinear.nc), \
+            (${opa9_UserChoices_R_FORCING}/weights_coreII_2_${opa9_UserChoices_ORCA_version}_bicubic.nc , weights_bicubic.nc), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/GRIDS/${opa9_UserChoices_ORCA_version}_domain_cfg.nc, domain_cfg.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_maskMFO.nc, maskMFO.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_resto.nc, resto.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_subbasins.nc, subbasins.nc    ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_zdfiwm_forcing.nc, zdfiwm_forcing.nc),\
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_sali_ref_clim_monthly.nc, sali_ref_clim_monthly.nc), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_eddy_viscosity_3D.nc, eddy_viscosity_3D.nc ), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_runoff_core_monthly.nc, runoff_core_monthly.nc),\
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_sss_absolute_salinity_WOA13_decav_clim.nc, sss_absolute_salinity.nc), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_conservative_temperature_WOA13_decav_clim.nc, conservative_temperature_WOA13_decav_clim.nc), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_absolute_salinity_WOA13_decav_clim.nc, absolute_salinity_WOA13_decav_clim.nc), \
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_geothermal_heating.nc, geothermal_heating.nc),\
+            (${R_IN}/OCE/NEMO/${opa9_UserChoices_ORCA_version}/OPA/${opa9_UserChoices_ORCA_version}_chlorophyll.nc, chlorophyll.nc)
+
+
+[ParametersFiles]
+List=   (${MODIPSL}/modeles/NEMO/cfgs/SHARED/namelist_ref           , namelist_ref        ), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/domain_def_nemo.xml    , domain_def_nemo.xml ), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/axis_def_nemo.xml      , axis_def_nemo.xml   ), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/grid_def_nemo.xml      , grid_def_nemo.xml  ), \
+        (${MODIPSL}/modeles/NEMO/cfgs/SHARED/field_def_nemo-oce.xml , field_def_nemo-oce.xml  ), \
+        (${SUBMIT_DIR}/PARAM/NAMELIST/${RESOL_OCE}/namelist_${opa9_UserChoices_forcing}_${exptype}_cfg, namelist_cfg), \
+        (${SUBMIT_DIR}/PARAM/XML/context_nemo.xml              , context_nemo.xml               ), \
+        (${SUBMIT_DIR}/PARAM/XML/iodef.xml                     , iodef.xml               ), \
+        (${SUBMIT_DIR}/PARAM/XML/file_def_nemo-oce.xml         , file_def_nemo-oce.xml   )
+
+
+[RestartFiles]
+List=   (${config_UserChoices_JobName}_${NEMO_END}_restart.nc,  restart.nc, restart.nc)
+
+[OutputText]
+List=   (ocean.output, run.stat, STRAIT.dat, namelist_ref, namelist_cfg )
+
+[OutputFiles]
+List=   (${config_UserChoices_JobName}_1y_scalar.nc    , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_scalar.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1y_grid_T.nc    , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_grid_T.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1y_grid_U.nc    , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_grid_U.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1y_grid_V.nc    , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_grid_V.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1y_grid_W.nc    , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_grid_W.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1y_diaptr_T_2D.nc  , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_diaptr_T.nc   , NONE          ),\
+        (${config_UserChoices_JobName}_1y_diaptr_T_3D.nc  , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_diaptr_T.nc   , NONE          ),\
+        (${config_UserChoices_JobName}_1y_diaptr_W.nc  , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_diaptr_W.nc   , NONE          ),\
+        (${config_UserChoices_JobName}_1y_trdtra.nc    , ${R_OUT_OCE_O_Y}/${PREFIX}_1Y_trdtra.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1m_scalar.nc    , ${R_OUT_OCE_O_M}/${PREFIX}_1M_scalar.nc     , Post_1M_scalar),\
+        (${config_UserChoices_JobName}_1m_grid_T.nc    , ${R_OUT_OCE_O_M}/${PREFIX}_1M_grid_T.nc     , Post_1M_grid_T),\
+        (${config_UserChoices_JobName}_1m_grid_U.nc    , ${R_OUT_OCE_O_M}/${PREFIX}_1M_grid_U.nc     , Post_1M_grid_U),\
+        (${config_UserChoices_JobName}_1m_grid_V.nc    , ${R_OUT_OCE_O_M}/${PREFIX}_1M_grid_V.nc     , Post_1M_grid_V),\
+        (${config_UserChoices_JobName}_1m_grid_W.nc    , ${R_OUT_OCE_O_M}/${PREFIX}_1M_grid_W.nc     , Post_1M_grid_W),\
+        (${config_UserChoices_JobName}_1m_diaptr_T_2D.nc  , ${R_OUT_OCE_O_M}/${PREFIX}_1M_diaptr_T_2D.nc   , NONE),\
+        (${config_UserChoices_JobName}_1m_diaptr_T_3D.nc  , ${R_OUT_OCE_O_M}/${PREFIX}_1M_diaptr_T_3D.nc   , NONE),\
+        (${config_UserChoices_JobName}_1m_diaptr_W.nc  , ${R_OUT_OCE_O_M}/${PREFIX}_1M_diaptr_W.nc   , Post_1M_diaptr_W),\
+        (${config_UserChoices_JobName}_1m_strait_oce.nc , ${R_OUT_OCE_O_M}/${PREFIX}_1M_strait_oce.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1m_trdtra.nc    , ${R_OUT_OCE_O_M}/${PREFIX}_1M_trdtra.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_5d_grid_T.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_5D_grid_T.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_5d_grid_U.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_5D_grid_U.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_5d_grid_V.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_5D_grid_V.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_5d_grid_W.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_5D_grid_W.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_5d_trdtra.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_5D_trdtra.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1d_grid_T.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_1D_grid_T.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1d_grid_U.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_1D_grid_U.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1d_grid_W.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_1D_grid_W.nc     , NONE          ),\
+        (${config_UserChoices_JobName}_1d_SBC.nc       , ${R_OUT_OCE_O_D}/${PREFIX}_1D_SBC.nc        , NONE          ),\
+        (${config_UserChoices_JobName}_1d_scalar.nc    , ${R_OUT_OCE_O_D}/${PREFIX}_1D_scalar.nc     , NONE          ),\
+        (mesh_mask.nc     , ${R_OUT_OCE_O}/${config_UserChoices_JobName}_mesh_mask.nc                , NONE          ),\
+        (runoffs.nc       , ${R_OUT_OCE_O}/${config_UserChoices_JobName}_runoffs.nc                  , NONE          ),\
+        (damping.coeff.nc , ${R_OUT_OCE_O_D}/${PREFIX}_damping.coeff.nc                              , NONE          ),\
+        (output.abort.nc  , ${R_OUT_OCE_D}/${PREFIX}_output.abort.nc                                 , NONE          ),\
+        (output.init.nc   , ${R_OUT_OCE_O_D}/${config_UserChoices_JobName}_${PeriodDateBegin}_output.init.nc,NONE    )
+
+# Monthly analysis
+
+[Post_1M_scalar]
+Patches = ()
+GatherWithInternal = (time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = (scmastot, scvoltot, scsshtot, scsshste, scsshtst, sctemtot, scsaltot, ibgheat_tot, sbgheat_tot)
+ChunckJob2D = NONE
+TimeSeriesVars3D = ()
+ChunckJob3D = NONE
+Seasonal=OFF
+
+[Post_1M_grid_T]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, deptht, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = (zos, tos, sos, mldr10_1, nshfls, rsntds, rsds, friver, hc300, wfo)
+ChunckJob2D = NONE
+TimeSeriesVars3D = (thetao, so)
+ChunckJob3D = NONE
+Seasonal=ON
+
+[Post_1M_grid_U]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, depthu, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = ()
+ChunckJob2D = NONE
+TimeSeriesVars3D = ()
+ChunckJob3D = NONE
+Seasonal=ON
+
+[Post_1M_grid_V]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, depthv, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = ()
+ChunckJob2D = NONE
+TimeSeriesVars3D = ()
+ChunckJob3D = NONE
+Seasonal=ON
+
+[Post_1M_grid_W]
+Patches = ()
+GatherWithInternal = (nav_lon, nav_lat, deptht, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = ( )
+ChunckJob2D = NONE
+TimeSeriesVars3D = ( )
+ChunckJob3D = NONE
+Seasonal=OFF
+
+[Post_1M_diaptr_W]
+Patches = ()
+GatherWithInternal = (nav_lat, depthw, time_counter, time_centered, time_centered_bounds)
+TimeSeriesVars2D = (msftyz_glo, msftyz_atl, msftyz_ind)
+ChunckJob2D = NONE
+TimeSeriesVars3D = ()
+ChunckJob3D = NONE
+Seasonal=OFF
+

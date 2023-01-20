@@ -1,0 +1,68 @@
+#!/bin/ksh
+
+#-----------------------------------
+function ICE_Initialize
+{ 
+    IGCM_debug_PushStack "ICE_Initialize"
+
+    echo INITIALIZE ICE !!!
+
+    IGCM_debug_PopStack "ICE_Initialize"
+}
+
+#-----------------------------------
+function ICE_Update
+{
+    IGCM_debug_PushStack "ICE_Update"
+
+
+    ##--Write Frequency for iomput
+    ## Differents frequencies are allowed for ICE files
+
+    VI1D_ENABLE=".FALSE."
+    VI5D_ENABLE=".FALSE."
+    VI1M_ENABLE=".FALSE."
+    VI1Y_ENABLE=".FALSE."
+
+    for frequency in ${config_ICE_WriteFrequency} ; do
+        case ${frequency} in
+            ( 1D|1d ) VI1D_ENABLE=".TRUE." ;;
+            ( 5D|5d ) VI5D_ENABLE=".TRUE." ;;
+            ( 1M|1m ) VI1M_ENABLE=".TRUE." ;;
+            ( *[yY] ) VI1Y_ENABLE=".TRUE." ;;
+        esac
+    done
+
+   IGCM_comp_modifyNamelist blocker    namelist_ice_cfg nn_iceini_file  ${si3_UserChoices_Init_From_File}
+
+  # Update iodef.xml
+
+    IGCM_debug_Print 1 'Informations into iodef.xml : VI1D_ENABLE VI5D_ENABLE VI1M_ENABLE VI1Y_ENABLE '
+    IGCM_debug_Print 1 ${VI1D_ENABLE}  ${VI5D_ENABLE} ${VI1M_ENABLE} ${VI1Y_ENABLE}
+
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-ice.xml 1d_ice enabled ${VI1D_ENABLE}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-ice.xml 5d_ice enabled ${VI5D_ENABLE}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-ice.xml 1m_ice enabled ${VI1M_ENABLE}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-ice.xml 1y_ice enabled ${VI1Y_ENABLE}
+
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-ice.xml 1d_ice output_level ${si3_UserChoices_OutputLevel}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-ice.xml 5d_ice output_level ${si3_UserChoices_OutputLevel}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-ice.xml 1m_ice output_level ${si3_UserChoices_OutputLevel}
+    IGCM_comp_modifyXmlFile nonblocker file_def_nemo-ice.xml 1y_ice output_level ${si3_UserChoices_OutputLevel}
+
+
+    echo UPDATE ICE !!!
+
+    IGCM_debug_PopStack "ICE_Update"
+}
+
+#-----------------------------------
+function ICE_Finalize
+{
+    IGCM_debug_PushStack "ICE_Finalize"
+
+    echo FINALIZE ICE !!!
+
+    IGCM_debug_PopStack "ICE_Finalize"
+}
+

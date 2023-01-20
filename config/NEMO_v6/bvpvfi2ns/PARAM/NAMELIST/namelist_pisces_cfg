@@ -1,0 +1,163 @@
+!-----------------------------------------------------------------------
+&nampismod     !  Model used 
+  ln_p4z    = .true.         !  PISCES model used
+/
+!-----------------------------------------------------------------------
+&nampisext     !   air-sea exchange
+!-----------------------------------------------------------------------
+   ln_co2int  = _AUTO_: DEFAULT=.false. ! read atm pco2 from a file (T) or constant (F)
+   atcco2     = _AUTO_: DEFAULT=278.    ! Constant value atmospheric pCO2 - ln_co2int = F
+   clname     =  'atcco2.txt'  ! Name of atm pCO2 file - ln_co2int = T
+   nn_offset  =  0       ! Offset model-data start year - ln_co2int = T
+!                        ! If your model year is iyy, nn_offset=(years(1)-iyy)
+!                        ! then the first atmospheric CO2 record read is at years(1)
+/
+!-----------------------------------------------------------------------
+&nampisatm     !  Atmospheric prrssure 
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nampisbio     !   biological parameters
+!-----------------------------------------------------------------------
+   nrdttrc    =  _AUTO_
+/
+!-----------------------------------------------------------------------
+&namp4zlim     !   parameters for nutrient limitations for PISCES std  - ln_p4z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp5zlim     !   parameters for nutrient limitations PISCES QUOTA    - ln_p5z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp5zquota   !   parameters for nutrient limitations PISCES quota    - ln_p5z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nampisopt     !   parameters for optics
+!-----------------------------------------------------------------------
+!              !  file name     ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !                !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+   sn_par      = 'par_fraction.orca' ,     24            , 'fr_par'  ,  .true.      , .true. , 'yearly'  , ''       , ''       , ''
+   cn_dir      = './'      !  root directory for the location of the dynamical files
+   ln_varpar   =  .true.   ! boolean for PAR variable
+   parlux      =  0.43      ! Fraction of shortwave as PAR
+/
+!-----------------------------------------------------------------------
+&namp4zprod    !   parameters for phytoplankton growth for PISCES std  - ln_p4z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp5zprod    !   parameters for phytoplankton growth for PISCES quota- ln_p5z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp4zmort    !   parameters for phytoplankton sinks for PISCES std   - ln_p4z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp5zmort    !   parameters for phytoplankton sinks for PISCES quota - ln_p5z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp4zmes     !   parameters for mesozooplankton for PISCES std       - ln_p4z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp5zmes     !   parameters for mesozooplankton
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp4zzoo     !   parameters for microzooplankton for PISCES std      - ln_p4z
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namp5zzoo     !   parameters for microzooplankton
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nampisfer     !   parameters for iron chemistry
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------  
+&nampisrem     !   parameters for remineralization
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nampispoc     !   parameters for organic particles
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nampiscal     !   parameters for Calcite chemistry
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nampisbc     !   parameters for inputs deposition
+!-----------------------------------------------------------------------
+!              !  file name        ! frequency (hours) ! variable      ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !                   !  (if <0  months)  !   name        !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+!-----------------------------------------------------------------------
+   sn_dust     = 'dustdep'         ,       -1          , 'dust'        ,  .true.      , .true. , 'yearly'  , 'weights_2D_r360x180_bilin.nc'       , ''    , ''
+   sn_ironsed  = 'pmarge.orca'     ,    -12            , 'bathy'       ,  .false.     , .true. , 'yearly'  , ''       , ''    , ''
+   sn_hydrofe  = 'hydrofe.orca'    ,    -12            , 'epsdb'       ,  .false.     , .true. , 'yearly'  , ''       , ''    , ''
+!
+   cn_dir      = './'      !  root directory for the location of the dynamical files
+   ln_ironsed  =  .true.   ! boolean for Fe input from sediments
+   ln_ironice  =  .true.   ! boolean for Fe input from sea ice
+   ln_hydrofe  =  .false.   ! boolean for from hydrothermal vents
+   sedfeinput  =  2.e-9    ! Coastal release of Iron
+   distcoast   =  5.e3     ! Distance off the coast for Iron from sediments
+   mfrac       =  0.035    ! Fe mineral fraction of dust
+   wdust       =  2.0      ! Dust sinking speed
+   icefeinput  =  15.e-9   ! Iron concentration in sea ice
+   hratio      =  1.e+7    ! Fe to 3He ratio assumed for vent iron supply
+/
+!-----------------------------------------------------------------------
+&nampislig     !   Namelist parameters for ligands, nampislig
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nampisice     !   Prescribed sea ice tracers
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nampisdmp     !   Damping 
+!-----------------------------------------------------------------------
+  nn_pisdmp   =  _AUTO_
+/
+!-----------------------------------------------------------------------
+&nampismass    !   Mass conservation
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlobphy     !   biological parameters for phytoplankton
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlobnut     !   biological parameters for nutrients
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlobzoo     !   biological parameters for zooplankton
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlobdet     !   biological parameters for detritus
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlobdom     !   biological parameters for DOM
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlobsed     !   parameters from aphotic layers to sediment
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlobrat     !   general coefficients
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlobopt     !   optical parameters
+!-----------------------------------------------------------------------
+/
