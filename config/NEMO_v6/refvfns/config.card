@@ -10,7 +10,7 @@ libIGCM=1.0
 [UserChoices]
 #============================
 #-- (<8 chars MAX for JobName)
-JobName=exp00
+JobName=refvfns
 #----- Short Name of Experiment
 ExperimentName=clim
 #----- DEVT TEST PROD

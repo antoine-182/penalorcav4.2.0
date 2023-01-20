@@ -34,7 +34,7 @@
 !-----------------------------------------------------------------------
 &namdom        !   time and space domain
 !-----------------------------------------------------------------------
-   ln_linssh   = .true.   !  =T  linear free surface  ==>>  model level are fixed in time
+   ln_linssh   = .false.   !  =T  linear free surface  ==>>  model level are fixed in time
    rn_Dt      = 2700.     !  time step for the dynamics and tracer
    ln_meshmask =  _AUTO_
 /
@@ -58,8 +58,8 @@
    !___________!_________________________!___________________!___________!_____________!________!___________!__________________!__________!_______________!
    !           !  file name              ! frequency (hours) ! variable  ! time interp.!  clim  ! 'yearly'/ ! weights filename ! rotation ! land/sea mask !
    !           !                         !  (if <0  months)  !   name    !   (logical) !  (T/F) ! 'monthly' !                  ! pairing  !    filename   !
-   sn_tem  = 'woce_temp_monthly_init_4p2', -1 ,'contemp' , .true. , .true. , 'yearly' , ''  ,   ''    ,    ''
-   sn_sal  = 'woce_salt_monthly_init_4p2', -1 ,'presalt' , .true. , .true. , 'yearly' , ''  ,   ''    ,    ''
+   sn_tem  = 'conservative_temperature_WOA13_decav_Reg1L75_clim', -1 ,'votemper' , .true. , .true. , 'yearly' , 'weights_3D_WOA13d1_2_bilinear.nc'  ,   ''    ,    ''
+   sn_sal  = 'absolute_salinity_WOA13_decav_Reg1L75_clim'       , -1 ,'vosaline' , .true. , .true. , 'yearly' , 'weights_3D_WOA13d1_2_bilinear.nc'  ,   ''
 /
 !!======================================================================
 !!            ***  Surface Boundary Condition namelists  ***          !!
@@ -93,7 +93,7 @@
    ln_traqsr   = .true.   !  Light penetration in the ocean            (T => fill namtra_qsr)
    ln_dm2dc    = .true.   !  daily mean to diurnal cycle on short wave
    ln_ssr      = .true.   !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
-   nn_fwb      = 1         !  FreshWater Budget: =0 unchecked
+   nn_fwb      = 2         !  FreshWater Budget: =0 unchecked
       !                    !     =1 global mean of e-p-r set to zero at each time step
       !                    !     =2 annual global mean of e-p-r set to zero
    ln_rnf      = .true.   !  runoffs                                   (T => fill namsbc_rnf)
@@ -102,30 +102,21 @@
 &namsbc_blk    !   namsbc_blk  generic Bulk formula                     (ln_blk =T)
 !-----------------------------------------------------------------------
    !                    !  bulk algorithm :
-   !                    !  bulk algorithm :
    ln_NCAR    = .true.     ! "NCAR"      algorithm   (Large and Yeager 2008)
-   !! Bulk transfer coefficients over sea-ice: (relevant IF: nn_ice >=1 )
-   ln_Cx_ice_cst = .true.     ! use constant ice-air bulk transfer coefficients (value given below)
-      rn_Cd_i  = 1.e-3       ! sea-ice drag coefficient
-      rn_Ce_i  = 1.e-3       !    "    sublimation coefficient
-      rn_Ch_i  = 1.e-3       !    "    sensible heat flux coefficient
-   ln_Cx_ice_AN05  = .false.  !  (Andreas et al. 2005)
-   ln_Cx_ice_LU12  = .false.  !  (Lupkes et al. 2012)
-   ln_Cx_ice_LG15  = .false.  !  (Lupkes & Gryanik 2015)
 
    cn_dir = './'  !  root directory for the bulk data location
-   !___________!______________________________!___________________!___________!______________!__________!___________!______________________!__________!_______________!
-   !           !             file name        ! frequency (hours) ! variable  ! time interp. !  clim    ! 'yearly'/ !  weights filename    ! rotation ! land/sea mask !
-   !           !                              !  (if <0  months)  !   name    !   (logical)  !  (T/F)   ! 'monthly' !                      ! pairing  !    filename   !
-   sn_wndi     = 'u_10_CORE2_fill'            ,         6.        , 'U_10_MOD',   .false.    ,  .true. , 'yearly'  , 'weights_bicubic.nc'  , 'Uwnd'   , ''
-   sn_wndj     = 'v_10_CORE2_fill'            ,         6.        , 'V_10_MOD',   .false.    ,  .true. , 'yearly'  , 'weights_bicubic.nc'  , 'Vwnd'   , ''
-   sn_qsr      = 'ncar_rad_CORE2_fill'        ,        24.        , 'SWDN_MOD',   .false.    ,  .true. , 'yearly'  , 'weights_bilinear.nc' , ''       , ''
-   sn_qlw      = 'ncar_rad_CORE2_fill'        ,        24.        , 'LWDN_MOD',   .false.    ,  .true. , 'yearly'  , 'weights_bilinear.nc' , ''       , ''
-   sn_tair     = 't_10_CORE2_fill'            ,         6.        , 'T_10_MOD',   .false.    ,  .true. , 'yearly'  , 'weights_bilinear.nc' , ''       , ''
-   sn_humi     = 'q_10_CORE2_fill'            ,         6.        , 'Q_10_MOD',   .false.    ,  .true. , 'yearly'  , 'weights_bilinear.nc' , ''       , ''
-   sn_prec     = 'ncar_precip_CORE2_fill'     ,        -1.        , 'PRC_MOD' ,   .false.    ,  .true. , 'yearly'  , 'weights_bilinear.nc' , ''       , ''
-   sn_snow     = 'ncar_precip_CORE2_fill'     ,        -1.        , 'SNOW'    ,   .false.    ,  .true. , 'yearly'  , 'weights_bilinear.nc' , ''       , ''
-   sn_slp      = 'slp_CORE2_fill'             ,         6.        , 'SLP'     ,   .false.    ,  .true. , 'yearly'  , 'weights_bilinear.nc' , ''       , ''
+   !___________!______________!___________________!___________!_____________!________!___________!______________________!__________!_______________!
+   !           !  file name   ! frequency (hours) ! variable  ! time interp.!  clim  ! 'yearly'/ !  weights filename    ! rotation ! land/sea mask !
+   !           !              !  (if <0  months)  !   name    !   (logical) !  (T/F) ! 'monthly' !                      ! pairing  !    filename   !
+   sn_wndi     = 'u_10'     ,         3          , 'uas'      ,     .true.  ,  .false. , 'yearly'  , 'weights_bicubic.nc'  , 'U1'
+   sn_wndj     = 'v_10'     ,         3          , 'vas'      ,     .true.  ,  .false. , 'yearly'  , 'weights_bicubic.nc'  , 'V1'
+   sn_qsr      = 'rsds'     ,         3          , 'rsds'     ,     .false. ,  .false. , 'yearly'  , 'weights_bilinear.nc' , ''
+   sn_qlw      = 'rlds'     ,         3          , 'rlds'     ,     .false. ,  .false. , 'yearly'  , 'weights_bilinear.nc' , ''
+   sn_tair     = 't_10'     ,         3          , 'tas'      ,     .true.  ,  .false. , 'yearly'  , 'weights_bilinear.nc' , ''
+   sn_humi     = 'q_10'     ,         3          , 'huss'     ,     .true.  ,  .false. , 'yearly'  , 'weights_bilinear.nc' , ''
+   sn_prec     = 'rain'     ,         3          , 'prra'     ,     .true.  ,  .false. , 'yearly'  , 'weights_bilinear.nc' , ''
+   sn_snow     = 'snow'     ,         3          , 'prsn'     ,     .true.  ,  .false. , 'yearly'  , 'weights_bilinear.nc' , ''
+   sn_slp      = 'slp'      ,         3          , 'psl'      ,     .true.  ,  .false. , 'yearly'  , 'weights_bilinear.nc' , ''
 /
 !-----------------------------------------------------------------------
 &namtra_qsr    !   penetrative solar radiation                          (ln_traqsr =T)
@@ -145,15 +136,15 @@
 &namsbc_ssr    !   surface boundary condition : sea surface restoring   (ln_ssr =T)
 !-----------------------------------------------------------------------
    nn_sssr     =     2     !  add a damping term to the surface freshwater flux
-      rn_deds     =  -220.00  !  magnitude of the damping on salinity   [mm/day]
+      rn_deds     =  -166.67  !  magnitude of the damping on salinity   [mm/day]
       ln_sssr_bnd =  .true.   !  flag to bound erp term (associated with nn_sssr=2)
       rn_sssr_bnd =   4.e0    !  ABS(Max/Min) value of the damping erp term [mm/day]
-      nn_sssr_ice =   1       ! control of sea surface restoring under sea-ice
+      nn_sssr_ice =   0       ! control of sea surface restoring under sea-ice
                               ! 0 = no restoration under ice : * (1-icefrac)
    !___________!_________________________!___________________!___________!_____________!________!___________!__________________!__________!_______________!
    !           !  file name              ! frequency (hours) ! variable  ! time interp.!  clim  ! 'yearly'/ ! weights filename ! rotation ! land/sea mask !
    !           !                         !  (if <0  months)  !   name    !   (logical) !  (T/F) ! 'monthly' !                  ! pairing  !    filename   !
-   sn_sss      = 'sss_absolute_salinity.nc', -1. , 'presalt',    .true. ,         .true. , 'yearly' ,    '' ,      ''
+   sn_sss      = 'sss_absolute_salinity.nc', -1. , 'sosaline',    .true. ,         .true. , 'yearly' ,    '' ,      ''
 /
 !-----------------------------------------------------------------------
 &namsbc_rnf    !   runoffs                                              (ln_rnf =T)
@@ -165,7 +156,7 @@
    ln_rnf_depth = .false.   !  read in depth information for runoff
    ln_rnf_tem  = .false.   !  read in temperature information for runoff
    ln_rnf_sal  = .false.   !  read in salinity information for runoff
-   ln_rnf_icb  = .false.   !  read iceberg flux
+   ln_rnf_icb  = .true.   !  read iceberg flux
    ln_rnf_depth_ini = .true. ! compute depth at initialisation from runoff file
       rn_rnf_max  = 0.05  !  max value of the runoff climatologie over global domain ( ln_rnf_depth_ini = .true )
       rn_dep_max  = 150.      !  depth over which runoffs is spread ( ln_rnf_depth_ini = .true )
@@ -270,7 +261,7 @@
 !-----------------------------------------------------------------------
 &namlbc        !   lateral momentum boundary condition                  (default: NO selection)
 !-----------------------------------------------------------------------
-   rn_shlat    =    0.     !  free slip
+   rn_shlat    =    0.     !  no slip
 /
 !-----------------------------------------------------------------------
 &namagrif      !  AGRIF zoom                                            ("key_agrif")
@@ -320,10 +311,10 @@
 &nambbl        !   bottom boundary layer scheme                         (default: OFF)
 !-----------------------------------------------------------------------
    ln_trabbl   = .true.    !  Bottom Boundary Layer parameterisation flag
-      nn_bbl_ldf  =  0        !  diffusive bbl (=1)   or not (=0)
-      nn_bbl_adv  =  2        !  advective bbl (=1/2) or not (=0)
+      nn_bbl_ldf  =  1        !  diffusive bbl (=1)   or not (=0)
+      nn_bbl_adv  =  0        !  advective bbl (=1/2) or not (=0)
       rn_ahtbbl   =  1000.    !  lateral mixing coefficient in the bbl  [m2/s]
-      rn_gambbl   =  20.      !  advective bbl coefficient                 [s]
+      rn_gambbl   =  10.      !  advective bbl coefficient                 [s]
 /
 !!======================================================================
 !!                        Tracer (T-S) namelists                      !!
@@ -355,7 +346,7 @@
    ln_traldf_iso   = .true.    !  iso-neutral (Standard operator)
    ln_traldf_msc   = .true.    !  Method of Stabilizing Correction      (both operators)
    !                       !  Coefficients:
-   nn_aht_ijk_t    = 21        !  space/time variation of eddy coef
+   nn_aht_ijk_t    = 20        !  space/time variation of eddy coef
       !                             !   = 20     aht = 1/2  Ud. max(e1,e2)
       rn_Ud        = 0.018          !  lateral diffusive velocity [m/s] (nn_aht_ijk_t= 0, 10, 20, 30)
       rn_Ld        = 100.e+3        !  lateral diffusive length   [m]   (nn_aht_ijk_t= 0, 10)
@@ -396,24 +387,6 @@
 !!   namdta_dyn    offline TOP: dynamics read in files                  (OFF_SRC only)
 !!======================================================================
 !
-!-----------------------------------------------------------------------
-&nam_vvl       !   vertical coordinate options                          (default: z-star)
-!-----------------------------------------------------------------------
-   ln_vvl_zstar  = .true.           !  z-star vertical coordinate
-   ln_vvl_ztilde = .false.          !  z-tilde vertical coordinate: only high frequency variations
-   ln_vvl_layer  = .false.          !  full layer vertical coordinate
-   ln_vvl_ztilde_as_zstar = .false. !  ztilde vertical coordinate emulating zstar
-   ln_vvl_zstar_at_eqtor  = .false. !  ztilde near the equator
-   rn_ahe3       =  0.0             !  thickness diffusion coefficient
-   rn_rst_e3t    = 30.0             !  ztilde to zstar restoration timescale [days]
-   rn_lf_cutoff  =  5.0             !  cutoff frequency for low-pass filter  [days]
-   rn_zdef_max   =  0.9             !  maximum fractional e3t deformation
-   ln_vvl_dbg    = .false.          !  debug prints    (T/F)
-   nn_vvl_interp =  2               !  interpolation method of scale factor anomalies at U/V/F points
-                                    !  =0 linear even at the bottom (old)
-                                    !  =1 linear with bottom correction
-                                    !  =2 proportionnal to scale factors at rest ("qco" like)
-/
 !-----------------------------------------------------------------------
 &namdyn_adv    !   formulation of the momentum advection                (default: NO selection)
 !-----------------------------------------------------------------------
@@ -462,7 +435,7 @@
    ln_zdfevd   = .true.       !  Enhanced Vertical Diffusion scheme
       nn_evdm  =    0            !  evd apply on tracer (=0) or on tracer and momentum (=1)
       rn_evd   =  100.           !  evd mixing coefficient [m2/s]
-   ln_zdfddm   = .false.    ! double diffusive mixing
+   ln_zdfddm   = .true.    ! double diffusive mixing
       rn_avts  =    1.e-4     !  maximum avs (vertical mixing on salinity)
       rn_hsbfr =    1.6       !  heat/salt buoyancy flux ratio
    ln_zdfiwm   = .true.       ! internal wave-induced mixing            (T =>   fill namzdf_iwm)
@@ -479,30 +452,29 @@
    ln_mxl0     = .true.    !  surface mixing length scale = F(wind stress) (T) or not (F)
       nn_mxlice   = 2         ! type of scaling under sea-ice
                               !    = 2  scaling with mean sea-ice thickness
-   nn_etau     =   1       !  penetration of tke below the mixed layer (ML) due to NIWs
+   nn_etau     =   0       !  penetration of tke below the mixed layer (ML) due to NIWs
                                !        = 0 none ; = 1 add a tke source below the ML
-   rn_efr     = 0.08       ! fraction of surface TKE value which penetrates below the mixed layer
    ln_lc      = .true.     !  Langmuir cell parameterisation (Axell 2002)
-   rn_lc      =  0.25      !  coef. associated to Langmuir cells
+   rn_lc      =  0.20      !  coef. associated to Langmuir cells
    nn_eice     =   3       !  attenutaion of langmuir & surface wave breaking under ice
    !                       !           = 3 weighted by 1-MIN(1,4*fr_i)
 /
 -----------------------------------------------------------------------
 &namzdf_iwm    !    internal wave-driven mixing parameterization        (ln_zdfiwm =T)
 !-----------------------------------------------------------------------
-   ln_mevar    = .false.    !  variable (T) or constant (F) mixing efficiency
-   ln_tsdiff   = .false.    !  account for differential T/S mixing (T) or not (F)
+   nn_zpyc     = 2         !  pycnocline-intensified dissipation scales as N (=1) or N^2 (=2)
+   ln_mevar    = .true.    !  variable (T) or constant (F) mixing efficiency
+   ln_tsdiff   = .true.    !  account for differential T/S mixing (T) or not (F)
 
    cn_dir      = './'      !  root directory for the iwm data location
    !___________!_________________________!___________________!___________!_____________!________!___________!__________________!__________!_______________!
    !           !  file name              ! frequency (hours) ! variable  ! time interp.!  clim  ! 'yearly'/ ! weights filename ! rotation ! land/sea mask !
    !           !                         !  (if <0  months)  !   name    !   (logical) !  (T/F) ! 'monthly' !                  ! pairing  !    filename   !
-   sn_mpb      = 'zdfiwm_forcing.nc'      , -12      , 'power_bot'   , .false.  , .true. , 'yearly' , '' , ''  , ''
-   sn_mpc      = 'zdfiwm_forcing.nc'      , -12      , 'power_cri'   , .false.  , .true. , 'yearly' , '' , ''  , ''
-   sn_mpn      = 'zdfiwm_forcing.nc'      , -12      , 'power_nsq'   , .false.  , .true. , 'yearly' , '' , ''  , ''
-   sn_mps      = 'zdfiwm_forcing.nc'      , -12      , 'power_sho'   , .false.  , .true. , 'yearly' , '' , ''  , ''
-   sn_dsb      = 'zdfiwm_forcing.nc'      , -12      , 'scale_bot'   , .false.  , .true. , 'yearly' , '' , ''  , ''
-   sn_dsc      = 'zdfiwm_forcing.nc'      , -12      , 'scale_cri'   , .false.  , .true. , 'yearly' , '' , ''  , ''
+   sn_mpb      = 'mixing_power_bot'      , -12               , 'field'   , .false.  , .true. , 'yearly' , '' , ''  , ''
+   sn_mpp      = 'mixing_power_pyc'      , -12               , 'field'   , .false.  , .true. , 'yearly' , '' , ''  , ''
+   sn_mpc      = 'mixing_power_cri'      , -12               , 'field'   , .false.  , .true. , 'yearly' , '' , ''  , ''
+   sn_dsb      = 'decay_scale_bot'       , -12               , 'field'   , .false.  , .true. , 'yearly' , '' , ''  , ''
+   sn_dsc      = 'decay_scale_cri'       , -12               , 'field'   , .false.  , .true. , 'yearly' , '' , ''  , ''
 /
 !!======================================================================
 !!                  ***  Diagnostics namelists  ***                   !!
@@ -522,7 +494,7 @@
 !-----------------------------------------------------------------------
 &namtrd        !   trend diagnostics                                    (default: OFF)
 !-----------------------------------------------------------------------
-   ln_tra_trd  = .false.   ! (T) 3D tracer trend output
+   ln_tra_trd  = .true.   ! (T) 3D tracer trend output
 /
 !
 !!======================================================================
@@ -548,7 +520,7 @@
 !-----------------------------------------------------------------------
 &namctl        !   Control prints                                       (default: OFF)
 !-----------------------------------------------------------------------
-   sn_cfctl%l_runstat = .true.   ! switches and which areas produce reports with the proc integer settings.
+   sn_cfctl%l_runstat = .true.    ! switches and which areas produce reports with the proc integer settings.
    sn_cfctl%l_trcstat = .true.   ! The default settings for the proc integers should ensure
 /
 !-----------------------------------------------------------------------

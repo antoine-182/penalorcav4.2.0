@@ -1,0 +1,220 @@
+#!/bin/ksh
+#-----------------------------------------------------------------
+function OCE_Initialize
+{
+    IGCM_debug_PushStack "OCE_Initialize"
+
+    if [ X$ResolOce != X ]; then
+       #ResolOce is set in config.card
+       RESOL_OCE=${ResolOce}
+    else
+       RESOL_OCE=${config_UserChoices_ExpType%%_*}
+    fi
+    ORCAGRID=${opa9_UserChoices_ORCA_version%%.*}
+    exptype=${config_UserChoices_ExpType##*/}
+
+    IGCM_debug_Print 1 " "
+    IGCM_debug_Print 1 "RESOL_OCE        : ${RESOL_OCE}"
+    IGCM_debug_Print 1 "ORCAGRID         : ${ORCAGRID}"
+    IGCM_debug_Print 1 "FORCING          : ${exptype}"
+    IGCM_debug_Print 1 "EXPERIMENT TYPE  : ${opa9_UserChoices_forcing}"
+
+# Local function to find namelists parameters
+supergrep () {
+    grep "^ *$1 *=" $2 | sed -e "s% *\!.*%%"
+}
+
+    OPA_RDT=$( supergrep rn_Dt ${SUBMIT_DIR}/PARAM/NAMELIST/${RESOL_OCE}/namelist_${opa9_UserChoices_forcing}_${exptype}_cfg | sed 's/ *rn_Dt *=//' | sed 's/\. *,//' )
+
+    # Period Length In Days between DateBegin and first day of calendar 0001 01 01
+    # /!\ Needed by OPA namelist to compute file names /!\
+    (( DaysSinceJC = $( IGCM_date_DaysSinceJC ${DateBegin} ) + 1 ))
+
+    (( OPA_NPDT_DAY  =  86400 / OPA_RDT ))
+    (( OPA_NPDT_YEAR  =  OPA_NPDT_DAY * 365     ))
+
+    IGCM_debug_Print 1 " "
+    IGCM_debug_Print 1 "OPA_RDT        ${OPA_RDT}"
+    IGCM_debug_Print 1 "OPA_NPDT_DAY   ${OPA_NPDT_DAY}"
+    IGCM_debug_Print 1 "OPA_NPDT_YEAR  ${OPA_NPDT_YEAR}"
+
+
+    IGCM_debug_PopStack "OCE_Initialize"
+}
+
+#-----------------------------------------------------------------
+function OCE_Update
+{
+    IGCM_debug_PushStack "OCE_Update"
+
+
+    V1D_ENABLE=".FALSE."
+    V5D_ENABLE=".FALSE."
+    V1M_ENABLE=".FALSE."
+    V1Y_ENABLE=".FALSE."
+
+    for frequency in ${config_OCE_WriteFrequency} ; do
+        case ${frequency} in
+            ( 1D|1d ) V1D_ENABLE=".TRUE." ;;
+            ( 5D|5d ) V5D_ENABLE=".TRUE." ;;
+            ( 1M|1m ) V1M_ENABLE=".TRUE." ;;
+            ( *[yY] ) V1Y_ENABLE=".TRUE." ;;
+        esac
+    done
+
+    if [ "${exptype}" = "ia"   ] ; then
+       NbFileInter=${#opa9_UserChoices_ListForcing[*]}
+       (( LengthForcing=${opa9_UserChoices_YearForcingEnd} - ${opa9_UserChoices_YearForcingInit} + 1 ))
+       (( DiffForcing=abs(${opa9_UserChoices_YearForcingEnd} - ${year} )))
+       (( ModuloForcing=${DiffForcing} % ${LengthForcing} ))
+      if [ ${ModuloForcing} -eq 0 ] ; then
+          (( year_forcing=${opa9_UserChoices_YearForcingEnd} ))
+       else
+          if [ ${year} -ge ${opa9_UserChoices_YearForcingInit} ] && [ ${year} -le ${opa9_UserChoices_YearForcingEnd} ] ; then
+             year_forcing=${year}
+          elif [ ${year} -lt ${opa9_UserChoices_YearForcingInit} ] ; then
+             (( year_forcing=${opa9_UserChoices_YearForcingEnd} - ${ModuloForcing} ))
+          else
+             (( year_forcing=${opa9_UserChoices_YearForcingInit} + ${ModuloForcing} - 1 ))
+          fi
+       fi
+       (( year_forcing_m1 = ${year_forcing} - 1))
+       (( year_forcing_p1 = ${year_forcing} + 1))
+       (( i = 0 ))
+       while [ $i -lt ${NbFileInter} ] ; do
+          eval file=${opa9_UserChoices_ListForcing[$i]}
+          IGCM_sys_Get ${opa9_UserChoices_R_FORCING}/${file}_${year_forcing_m1}.nc  ${file}_y${year_m1}.nc
+          IGCM_sys_Get ${opa9_UserChoices_R_FORCING}/${file}_${year_forcing}.nc     ${file}_y${year}.nc
+          IGCM_sys_Get ${opa9_UserChoices_R_FORCING}/${file}_${year_forcing_p1}.nc  ${file}_y${year_p1}.nc
+          (( i = i + 1 ))
+       done
+
+    fi
+
+    # Period Length In Days between DateBegin and first day of calendar 0001 01 01
+    # Needed by OPA namelist to compute correct file names 
+    (( PeriodDaysSinceJC =  $( IGCM_date_DaysSinceJC ${PeriodDateBegin} ) + 1  ))
+
+    ## Count of number of time steps from begin of OPA job
+    (( OPA_NIT000 = ( PeriodDaysSinceJC - DaysSinceJC ) * OPA_NPDT_DAY + 1 ))
+    (( OPA_NDT   = PeriodLengthInDays * OPA_NPDT_DAY ))
+    (( OPA_NITEND = OPA_NIT000 + OPA_NDT - 1))
+
+    ## Forcing to write one restart file at the end of period
+    OPA_NSTOCK="${OPA_NITEND}"
+
+    ## Verification of number of time steps per day
+    (( NB_SEC_DAY_MODEL = OPA_NPDT_DAY * OPA_RDT ))
+    (( NB_SEC_DAY = 60 * 60 * 24 ))
+
+    if [ ${NB_SEC_DAY_MODEL} -ne ${NB_SEC_DAY} ]
+	then
+        echo " NB_SEC_DAY_MODEL "${NB_SEC_DAY_MODEL} "NB_SEC_DAY" ${NB_SEC_DAY} "OPA_NPDT_DAY" ${OPA_NPDT_DAY} "OPA_RDT" ${OPA_RDT}
+        echo " VERIFY OPA_NPDT_DAY in opa9.card "
+        exit
+    fi
+
+   ##-- Restart configuration
+    if ( [ "${CumulPeriod}" -eq 1 ] && [ "${config_OCE_Restart}" = "n" ] ) ; then
+      OPA_LRSTAR=.FALSE.
+      OPA_NRSTDT=0
+      #echo "NO OPA RESTART"
+    elif ( [ "${CumulPeriod}" -eq 1 ] && [ "${config_OCE_Restart}" = "y" ] ) ; then
+      OPA_LRSTAR=.TRUE.
+      OPA_NRSTDT=0
+      #echo "OPA RESTART"
+    else
+      OPA_LRSTAR=.TRUE.
+      OPA_NRSTDT=2
+      #echo "OPA RESTART"
+    fi
+
+   
+    OPA_NMSH=.FALSE.
+    if [ "${opa9_UserChoices_mesh_mask}" = "y" ]; then
+        OPA_NMSH=.TRUE.
+        IGCM_card_WriteOption ${SUBMIT_DIR}/COMP/opa9.card UserChoices mesh_mask "n"
+    fi
+
+    ## nleapy configuration
+    case ${config_UserChoices_CalendarType} in
+        ( leap|gregorian) OPA_NLEAPY=1  ;;
+        ( noleap        ) OPA_NLEAPY=0  ;;
+        ( 360d          ) OPA_NLEAPY=30 ;;
+        ( *             ) OPA_NLEAPY=30 ;;
+    esac
+
+
+   typeset -r PRECIS=8
+   NEMO_END=$( echo $( awk "BEGIN { printf \"%0${PRECIS}d\",${OPA_NITEND} }" ) ) 
+
+
+   IGCM_comp_modifyNamelist blocker    namelist_cfg cn_exp    ${config_UserChoices_JobName}
+   IGCM_comp_modifyNamelist blocker    namelist_cfg nn_it000  ${OPA_NIT000}
+   IGCM_comp_modifyNamelist blocker    namelist_cfg nn_itend  ${OPA_NITEND}
+   IGCM_comp_modifyNamelist blocker    namelist_cfg ln_rstart ${OPA_LRSTAR}
+   IGCM_comp_modifyNamelist blocker    namelist_cfg nn_stock  ${OPA_NSTOCK}
+   IGCM_comp_modifyNamelist blocker    namelist_cfg nn_rstctl ${OPA_NRSTDT}
+   IGCM_comp_modifyNamelist blocker    namelist_cfg nn_date0  ${PeriodDateBegin}
+   IGCM_comp_modifyNamelist nonblocker namelist_cfg ln_meshmask ${OPA_NMSH}
+   IGCM_comp_modifyNamelist blocker    namelist_cfg nn_leapy  ${OPA_NLEAPY}  
+
+   IGCM_debug_Print 1 'Informations into iodef.xml : V1D_ENABLE V5D_ENABLE V1M_ENABLE V1Y_ENABLE '
+   IGCM_debug_Print 1 ${V1D_ENABLE}  ${V5D_ENABLE} ${V1M_ENABLE} ${V1Y_ENABLE}
+
+   IGCM_comp_modifyXmlFile nonblocker file_def_nemo-oce.xml 1d_opa enabled ${V1D_ENABLE}
+   IGCM_comp_modifyXmlFile nonblocker file_def_nemo-oce.xml 5d_opa enabled ${V5D_ENABLE}
+   IGCM_comp_modifyXmlFile nonblocker file_def_nemo-oce.xml 1m_opa enabled ${V1M_ENABLE}
+   IGCM_comp_modifyXmlFile nonblocker file_def_nemo-oce.xml 1y_opa enabled ${V1Y_ENABLE}
+
+   IGCM_comp_modifyXmlFile nonblocker file_def_nemo-oce.xml 1d_opa output_level ${opa9_UserChoices_OutputLevel}
+   IGCM_comp_modifyXmlFile nonblocker file_def_nemo-oce.xml 5d_opa output_level ${opa9_UserChoices_OutputLevel}
+   IGCM_comp_modifyXmlFile nonblocker file_def_nemo-oce.xml 1m_opa output_level ${opa9_UserChoices_OutputLevel}
+   IGCM_comp_modifyXmlFile nonblocker file_def_nemo-oce.xml 1y_opa output_level ${opa9_UserChoices_OutputLevel}
+
+   IGCM_comp_modifyXmlFile force context_nemo.xml ref_year NONE ${InitYear} 
+
+
+   #Long Name as global attribute (if LongName is not empty)
+   if [ ! "X${config_UserChoices_LongName}" = "X" ] ; then
+      listfile=$(ls file_def_nemo*.xml)
+      echo "<variable id=\"LongName\" type=\"string\">${config_UserChoices_LongName}</variable>" > add.tmp
+      for file in ${listfile}
+	do
+	    cp ${file} ${file}.tmp
+	    sed -e "/<file id/r add.tmp" \
+		${file}.tmp > ${file}
+	    rm ${file}.tmp 
+	done 
+	rm add.tmp
+   fi
+
+# update domain_def.xml file 
+   case ${RESOL_OCE} in 
+       ( *ORCA025* )  
+        sed -e 's/<zoom_domain id="1point" ibegin="139" jbegin="119"/<zoom_domain id="1point" ibegin="600" jbegin="600"/' domain_def_nemo.xml > domain_def.xml.tmp  
+         IGCM_sys_Mv domain_def.xml.tmp domain_def_nemo.xml  ; 
+   esac 
+
+   IGCM_debug_PopStack "OCE_Update"
+}
+
+#-----------------------------------
+function OCE_Finalize
+{
+    IGCM_debug_PushStack "OCE_Finalize"
+
+    if [ -f date.file ] ; then
+        # Prefix use in opa.card AND in lim2.card :
+	DATE_OPA=$( cat date.file | \
+	    sed "s/\ ${config_UserChoices_JobName}_[0-9]*[a-z]_\([0-9]*_[0-9]*\)_\ */\1/g" )
+        ###DATE_OPA=$( $DATE_OPABF | cut -c1-30 )
+	MainPrefix=${config_UserChoices_JobName}_1d_${DATE_OPA}
+	SecondPrefix=${config_UserChoices_JobName}_5d_${DATE_OPA}
+    fi
+
+    echo FINALIZE OCE !!!
+
+    IGCM_debug_PopStack "OCE_Finalize"
+}
+
