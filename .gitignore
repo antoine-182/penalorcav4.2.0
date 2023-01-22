@@ -1,2 +1,16 @@
 **/out_compile_nemo.*
 **/Script_Output*
+**/Debug/**
+**/Job*
+**/run.card*
+
+**/NEMO_v6_save
+**.svn
+
+util/
+oasis3-mct/
+modeles/
+bin/
+doc/
+libIGCM/
+lib/
