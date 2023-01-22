@@ -2,14 +2,17 @@
 **/Script_Output*
 **/Debug/**
 **/Job*
-**/run.card*
+**/run.car*
 
 **/NEMO_v6_save
 **.svn
 
+modeles/NEMO/**
+modeles/XIOS/**
+!modeles/NEMO/src
+
 util/
 oasis3-mct/
-modeles/
 bin/
 doc/
 libIGCM/
